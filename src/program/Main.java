@@ -31,7 +31,7 @@ public class Main {
 		testFile = "/home/anjan/workspace/HMM/data/test.txt.SPL";
 		vocabFile = trainFile;
 		numStates = 2;
-		numIter = 100;
+		numIter = 10;
 		
 		printParams();
 		

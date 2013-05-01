@@ -34,7 +34,18 @@ public class Multinomial {
 	}
 	
 	public void checkDistribution() {
-		//TODO
+		double tolerance = 1e-4;
+		
+		for(int i=0; i<y; i++) {
+			double sum = 0;
+			for(int j=0; j<x; j++) {
+				sum += count[j][i];
+			}
+			if(Math.abs(1 - sum) > tolerance) {
+				//System.err.println("Distribution sums to : " + sum);
+				throw new RuntimeException("Distribution sums to : " + sum);
+			}
+		}
 	}
 	
 	public void printDistribution() {

@@ -59,7 +59,7 @@ public class ForwardBackward {
 					obs = observation.get(instance.words[t], j);
 				}
 				alpha[t][j] = transSum * obs;
-				if(T == t) {
+				if(t == T) {
 					likelihood += alpha[t][j];
 				}
 			}
@@ -75,14 +75,14 @@ public class ForwardBackward {
 			beta[T][i] = 1.0;
 		}
 		//induction
-		for(int i=0; i<nrStates; i++) {
-			for(int t=T-1; t>=0; t--) {
+		for(int t=T-1; t>=0; t--) {
+			for(int i=0; i<nrStates; i++) {			
 				double sum = 0;
 				for(int j=0; j<nrStates; j++) {
 					double trans = transition.get(j, i);
 					double obs;
 					if(t == T-1) {
-						obs = 1.0; //taken for the fake state
+						obs = 1.0; //taken for the fake state(at t+1)
 					} else {
 						obs = observation.get(instance.words[t+1], j);
 					}
@@ -91,15 +91,18 @@ public class ForwardBackward {
 				beta[t][i] = sum;
 			}
 		}
+		//MyArray.printTable(beta);
 	}
 	
 	public void computePosterior() {
 		posterior = new double[T][nrStates];
 		for(int t=0; t<T; t++) {
 			for(int i=0; i<nrStates; i++) {
+				//System.out.format("alpha %f, beta %f\n", alpha[t][i], beta[t][i]);
 				posterior[t][i] = alpha[t][i] * beta[t][i] / likelihood;
 			}
 		}
+		MyArray.printTable(posterior);
 		//TODO: for t=T, it should be deterministic, should we define it?
 		//posterior[T][nrStates] = 1.0;
 	}

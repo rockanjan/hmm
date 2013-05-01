@@ -24,4 +24,9 @@ public class HMMParam {
 		observation.initializeRandom(r);
 	}
 	
+	public void check() { 
+		initial.checkDistribution();
+		transition.checkDistribution();
+		observation.checkDistribution();
+	}
 }

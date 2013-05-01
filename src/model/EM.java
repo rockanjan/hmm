@@ -3,7 +3,6 @@ package model;
 import java.text.DecimalFormat;
 
 import util.Timing;
-
 import corpus.Corpus;
 import corpus.Instance;
 
@@ -21,8 +20,6 @@ public class EM {
 		this.c = c;
 		this.model = model;
 	}
-	
-	
 	
 	public void eStep() {
 		HMMParam expectedCounts = new HMMParam(model.nrStates, model.nrObs);

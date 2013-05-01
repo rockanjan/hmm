@@ -18,4 +18,8 @@ public class HMM {
 		param.initialize(r);
 	}
 	
+	public void checkModel() {
+		param.check();
+	}
+	
 }
