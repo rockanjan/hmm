@@ -33,6 +33,10 @@ public class Multinomial {
 		return count[x][y];
 	}
 	
+	public void addToCounts(int x, int y, double value) {
+		count[x][y] += value;
+	}
+	
 	public void checkDistribution() {
 		double tolerance = 1e-4;
 		

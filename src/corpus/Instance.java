@@ -5,13 +5,17 @@ import java.util.ArrayList;
 import util.SmoothWord;
 
 import model.ForwardBackward;
+import model.ForwardBackwardNoScaling;
 import model.HMM;
+import model.HMMParam;
+import model.Multinomial;
 
 public class Instance {
 	public int[] words;
 	public int T; //sentence length
 	Corpus c;	
 	ForwardBackward forwardBackward;
+	public int nrStates;
 	
 	public Instance(Corpus c, String line) {
 		this.c = c;
@@ -20,11 +24,37 @@ public class Instance {
 	}
 	
 	public void doInference(HMM model) {
-		ForwardBackward forwardBackward = new ForwardBackward(model, this);
+		nrStates = forwardBackward.model.nrStates;
+		ForwardBackward forwardBackward = new ForwardBackwardNoScaling(model, this);
 		forwardBackward.doInference();
 	}
+	
 	public void clearInference() {
 		
+	}
+	
+	public void addToCounts(HMMParam param) { 
+		addToInitial(param.initial);
+		addToObservation(param.observation);
+		addToTransition(param.observation);
+	}
+	
+	public void addToInitial(Multinomial initial) {
+		for(int i=0; i<nrStates; i++) {
+			initial.addToCounts(i, 0, getStatePosterior(0, i));
+		}
+	}
+	
+	public void addToObservation(Multinomial observation) {
+		
+	}
+	
+	public void addToTransition(Multinomial transition) {
+		
+	}
+	
+	public double getStatePosterior(int t, int s) {
+		return forwardBackward.posterior[t][s];
 	}
 	
 	public void populateWordArray(String line) {

@@ -3,9 +3,9 @@ package model;
 import java.util.Random;
 
 public class HMMParam {
-	Multinomial initial;
-	Multinomial transition;
-	Multinomial observation;
+	public Multinomial initial;
+	public Multinomial transition;
+	public Multinomial observation;
 
 	int nrStates;
 	int nrObs;

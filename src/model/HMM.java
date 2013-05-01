@@ -4,8 +4,8 @@ import java.util.Random;
 
 public class HMM {
 
-	int nrStates;
-	int nrObs;
+	public int nrStates;
+	public int nrObs;
 	HMMParam param;
 	
 	public HMM(int nrStates, int nrObs) {
