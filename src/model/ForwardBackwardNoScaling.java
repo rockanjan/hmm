@@ -38,7 +38,13 @@ public class ForwardBackwardNoScaling extends ForwardBackward{
 			for(int j=0; j<nrStates; j++) {
 				double transSum = 0;
 				for(int i=0; i<nrStates; i++) {
-					transSum += alpha[t-1][i] * transition.get(j, i);
+					double trans;
+					if(t == T) {
+						trans = transition.get(nrStates, i);
+					} else {
+						trans = transition.get(j, i);
+					}
+					transSum += alpha[t-1][i] * trans;
 				}
 				double obs;
 				if(t == T) {
@@ -47,15 +53,14 @@ public class ForwardBackwardNoScaling extends ForwardBackward{
 				} else {
 					obs = observation.get(instance.words[t], j);
 				}
-				alpha[t][j] = transSum * obs;
-				if(t == T) {
-					likelihood += alpha[t][j];
-				}
+				alpha[t][j] = transSum * obs;				
 			}
 		}
+		for(int i=0; i<nrStates; i++) {
+			likelihood += alpha[T][i];			
+		}
 		logLikelihood = Math.log(likelihood);
-		//MyArray.printTable(alpha);
-		//System.out.println("Likelihood : " + likelihood);
+		//MyArray.printTable(alpha);		
 	}
 	
 	public void backward() {
@@ -69,7 +74,12 @@ public class ForwardBackwardNoScaling extends ForwardBackward{
 			for(int i=0; i<nrStates; i++) {			
 				double sum = 0;
 				for(int j=0; j<nrStates; j++) {
-					double trans = transition.get(j, i);
+					double trans;
+					if(t == T-1) { 
+						trans = transition.get(nrStates, i);
+					} else {
+						trans = transition.get(j, i);
+					}
 					double obs;
 					if(t == T-1) {
 						obs = 1.0; //taken for the fake state(at t+1)
@@ -92,13 +102,13 @@ public class ForwardBackwardNoScaling extends ForwardBackward{
 				posterior[t][i] = alpha[t][i] * beta[t][i] / likelihood;
 			}
 		}
-		MyArray.printTable(posterior);
+		//MyArray.printTable(posterior);
 		checkStatePosterior();
 	}
 	
 	@Override
 	public void checkStatePosterior(){
-		double tolerance = 1e-5;
+		double tolerance = 1e-3;
 		for(int t=0; t<T; t++) {
 			double sum = 0;
 			for(int i=0; i<nrStates; i++) {

@@ -25,23 +25,24 @@ public class EM {
 	
 	public void eStep() {
 		expectedCounts = new HMMParam(model.nrStates, model.nrObs);
-		expectedCounts.fillZeros();
+		expectedCounts.initializeZeros();
 		for (int n=0; n<c.trainInstanceList.size(); n++) {
 			Instance instance = c.trainInstanceList.get(n);
 			instance.doInference(model);
 			instance.addToCounts(expectedCounts);
 			LL += instance.forwardBackward.logLikelihood;
-			instance.clearInference();			
+			instance.clearInference();
 		}
 	}
 	
 	public void mStep() {
 		model.updateFromCounts(expectedCounts);
+		model.param.transition.printDistribution();
+		//model.param.initial.printDistribution();
 	}
 
 	public void start() {
 		System.out.println("Starting EM");
-		DecimalFormat df = new DecimalFormat("#.###");
 		Timing totalEMTime = new Timing();
 		totalEMTime.start();
 		Timing eStepTime = new Timing();

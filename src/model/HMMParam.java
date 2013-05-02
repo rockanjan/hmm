@@ -15,7 +15,7 @@ public class HMMParam {
 		this.nrObs = nrObs;
 	}
 	
-	public void fillZeros() {
+	public void initializeZeros() {
 		initial = new Multinomial(nrStates, 1);
 		transition = new Multinomial(nrStates+1, nrStates);
 		observation = new Multinomial(nrObs, nrStates);
