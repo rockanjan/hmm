@@ -6,7 +6,7 @@ public class HMM {
 
 	public int nrStates;
 	public int nrObs;
-	HMMParam param;
+	public HMMParam param;
 	
 	public HMM(int nrStates, int nrObs) {
 		this.nrStates = nrStates;
@@ -20,6 +20,11 @@ public class HMM {
 	
 	public void checkModel() {
 		param.check();
+	}
+	
+	public void updateFromCounts(HMMParam counts) {
+		counts.normalize();
+		param.cloneFrom(counts);
 	}
 	
 }

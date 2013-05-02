@@ -1,9 +1,10 @@
 package model;
 
+import util.MyArray;
 import corpus.Instance;
 
 public class ForwardBackwardNoScaling extends ForwardBackward{
-	
+	public double likelihood;
 	public ForwardBackwardNoScaling(HMM model, Instance instance) {
 		super();
 		this.model = model;
@@ -32,6 +33,7 @@ public class ForwardBackwardNoScaling extends ForwardBackward{
 			alpha[0][i] = pi * obs;  
 		}
 		likelihood = 0;
+		logLikelihood = 0;
 		for(int t = 1; t < T+1; t++) {
 			for(int j=0; j<nrStates; j++) {
 				double transSum = 0;
@@ -51,8 +53,9 @@ public class ForwardBackwardNoScaling extends ForwardBackward{
 				}
 			}
 		}
+		logLikelihood = Math.log(likelihood);
 		//MyArray.printTable(alpha);
-		System.out.println("Likelihood : " + likelihood);
+		//System.out.println("Likelihood : " + likelihood);
 	}
 	
 	public void backward() {
@@ -89,9 +92,28 @@ public class ForwardBackwardNoScaling extends ForwardBackward{
 				posterior[t][i] = alpha[t][i] * beta[t][i] / likelihood;
 			}
 		}
-		//MyArray.printTable(posterior);
-		//TODO: for t=T, it should be deterministic, should we define it?
-		//posterior[T][nrStates] = 1.0;
+		MyArray.printTable(posterior);
+		checkStatePosterior();
+	}
+	
+	@Override
+	public void checkStatePosterior(){
+		double tolerance = 1e-5;
+		for(int t=0; t<T; t++) {
+			double sum = 0;
+			for(int i=0; i<nrStates; i++) {
+				if(Double.isInfinite(posterior[t][i])){
+					throw new RuntimeException("State posterior infinite while checking");
+				}
+				if(Double.isNaN(posterior[t][i])){
+					throw new RuntimeException("State posterior NaN while checking");
+				}
+				sum += posterior[t][i];
+			}
+			if(Math.abs(sum - 1) > tolerance) {
+				throw new RuntimeException("In checking state posterior, sum = " + sum);
+			}
+		}
 	}
 
 	@Override

@@ -15,6 +15,12 @@ public class HMMParam {
 		this.nrObs = nrObs;
 	}
 	
+	public void fillZeros() {
+		initial = new Multinomial(nrStates, 1);
+		transition = new Multinomial(nrStates+1, nrStates);
+		observation = new Multinomial(nrObs, nrStates);
+	}
+	
 	public void initialize(Random r) {
 		initial = new Multinomial(nrStates, 1);
 		transition = new Multinomial(nrStates+1, nrStates); //+1 for fake state
@@ -28,5 +34,17 @@ public class HMMParam {
 		initial.checkDistribution();
 		transition.checkDistribution();
 		observation.checkDistribution();
+	}
+	
+	public void normalize() {
+		initial.normalize();
+		transition.normalize();
+		observation.normalize();
+	}
+	
+	public void cloneFrom(HMMParam source) {
+		initial.cloneFrom(source.initial);
+		observation.cloneFrom(source.observation);
+		transition.cloneFrom(source.transition);
 	}
 }

@@ -15,6 +15,8 @@ public class EM {
 	double oldLL = 0;
 	double LL = 0;
 	
+	HMMParam expectedCounts;
+	
 	public EM(int numIter, Corpus c, HMM model) {
 		this.numIter = numIter;
 		this.c = c;
@@ -22,20 +24,20 @@ public class EM {
 	}
 	
 	public void eStep() {
-		HMMParam expectedCounts = new HMMParam(model.nrStates, model.nrObs);
-		
-		for(int n=0; n<c.trainInstanceList.size(); n++) {
+		expectedCounts = new HMMParam(model.nrStates, model.nrObs);
+		expectedCounts.fillZeros();
+		for (int n=0; n<c.trainInstanceList.size(); n++) {
 			Instance instance = c.trainInstanceList.get(n);
 			instance.doInference(model);
-			
+			instance.addToCounts(expectedCounts);
+			LL += instance.forwardBackward.logLikelihood;
+			instance.clearInference();			
 		}
 	}
 	
 	public void mStep() {
-		
+		model.updateFromCounts(expectedCounts);
 	}
-
-
 
 	public void start() {
 		System.out.println("Starting EM");
@@ -48,12 +50,11 @@ public class EM {
 			//e-step
 			eStepTime.start();
 			eStep();
-			System.out.format("LL %2.10f \t E-step time %s\n", LL, eStepTime.stop());
+			System.out.format("LL %2.10f \t Iter %d E-step time %s\n", LL, iterCount, eStepTime.stop());
 			//m-step
 			mStep();
 			oldLL = LL;
 		}
 		System.out.println("Total EM Time : " + totalEMTime.stop());
-		
 	}
 }

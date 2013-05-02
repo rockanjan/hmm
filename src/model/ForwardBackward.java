@@ -6,10 +6,9 @@ public abstract class ForwardBackward {
 	
 	public HMM model;
 	Instance instance;
-	public double likelihood;
 	public double logLikelihood;
-	double alpha[][];
-	double beta[][];
+	public double alpha[][];
+	public double beta[][];
 	public double posterior[][];
 	
 	//for easier reference
@@ -25,5 +24,12 @@ public abstract class ForwardBackward {
 	public abstract void computePosterior();
 	
 	public abstract void checkForwardBackward();
+	public abstract void checkStatePosterior();
+	
+	public void clear() {
+		alpha = null;
+		beta = null;
+		posterior = null;
+	}
 	
 }

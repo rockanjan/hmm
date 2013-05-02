@@ -11,9 +11,8 @@ import java.util.Map;
 public class Corpus {
 	public String delimiter;
 	public InstanceList trainInstanceList = new InstanceList();
-	
 	//testInstanceList can be empty
-	public InstanceList testInstanceList = new InstanceList();
+	public InstanceList testInstanceList;
 	
 	public Vocabulary corpusVocab; 
 	
@@ -28,7 +27,7 @@ public class Corpus {
 		BufferedReader br = new BufferedReader(new FileReader(inFile));
 		String line = null;
 		int totalWords = 0;
-		testInstanceList = new InstanceList();
+		testInstanceList = new InstanceList();		 
 		while( (line = br.readLine()) != null ) {
 			line = line.trim();
 			if(! line.isEmpty()) {
@@ -58,7 +57,7 @@ public class Corpus {
 					trainInstanceList.add(instance);
 					totalWords += instance.words.length;
 				} else {
-					System.out.println("Could not read from train file, line = " + line);
+					System.err.println("Could not read from train file, line = " + line);
 				}
 			}
 		}
@@ -92,7 +91,7 @@ public class Corpus {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		String inFile = "/home/anjan/workspace/HMM/data/train.txt.SPL";
+		String inFile = "/home/anjan/workspace/HMM/data/test.txt.SPL";
 		int vocabThreshold = 1;
 		Corpus c = new Corpus("\\s+", vocabThreshold);
 		c.readVocab(inFile);
