@@ -1,6 +1,7 @@
 package model;
 
 import util.MyArray;
+import util.Stats;
 import corpus.Instance;
 
 public class ForwardBackwardScaled extends ForwardBackward{
@@ -26,7 +27,7 @@ public class ForwardBackwardScaled extends ForwardBackward{
 	
 	@Override
 	public void forward() {
-		alpha = new double[T+1][nrStates]; //+1 for fake state
+		alpha = new double[T][nrStates]; //+1 for fake state
 		logLikelihood = 0;
 		//for t=0
 		for(int i=0; i<nrStates; i++) {
@@ -34,8 +35,9 @@ public class ForwardBackwardScaled extends ForwardBackward{
 			double obs = observation.get( instance.words[0], i);
 			alpha[0][i] = pi * obs;
 			if(alpha[0][i] == 0) {
-				System.out.println("ZERO alpha at initial");
-				System.exit(-1);
+				Stats.totalFixes++;
+				alpha[0][i] = 1e-300; //fix
+				//System.err.format("ZERO alpha at initial. init = %f, obs=%f\n", pi, obs);
 			}
 			scale[0] += alpha[0][i];
 		}
@@ -48,24 +50,19 @@ public class ForwardBackwardScaled extends ForwardBackward{
 			MyArray.printTable(alpha);
 			throw new RuntimeException("logLikelihood at initial position in forward is NaN");
 		}
-		for(int t = 1; t < T+1; t++) {
+		for(int t = 1; t < T; t++) {
 			for(int j=0; j<nrStates; j++) {
 				double transSum = 0;
 				for(int i=0; i<nrStates; i++) {
 					transSum += alpha[t-1][i] * transition.get(j, i);
 				}
 				double obs;
-				if(t == T) {
-					//fake state
-					obs = 1.0;
-				} else {
-					obs = observation.get(instance.words[t], j);
-					//fix
-					if(obs == 0) {
-						obs = 1e-100;
-					}
-				}
+				obs = observation.get(instance.words[t], j);
 				alpha[t][j] = transSum * obs;
+				if(alpha[t][j] == 0) {
+					Stats.totalFixes++;
+					alpha[t][j] = 1e-300;//fix
+				}
 				scale[t] += alpha[t][j];
 			}
 			//scale
@@ -84,31 +81,27 @@ public class ForwardBackwardScaled extends ForwardBackward{
 			}
 		}
 		//MyArray.printTable(alpha);
-		System.out.println("LogLikelihood: " + logLikelihood);
+		//System.out.println("LogLikelihood: " + logLikelihood);
 	}
 	
 	@Override
 	public void backward() {
-		beta = new double[T+1][nrStates];
+		beta = new double[T][nrStates];
 		//initialization for t=T
 		for(int i=0; i<nrStates; i++) {
-			beta[T][i] = scale[T] * 1.0;
+			beta[T-1][i] = scale[T-1] * 1.0;
 		}
 		//induction
-		for(int t=T-1; t>=0; t--) {
+		for(int t=T-2; t>=0; t--) {
 			for(int i=0; i<nrStates; i++) {			
 				double sum = 0;
 				for(int j=0; j<nrStates; j++) {
 					double trans = transition.get(j, i);
 					double obs;
-					if(t == T-1) {
-						obs = 1.0; //taken for the fake state(at t+1)
-					} else {
-						obs = observation.get(instance.words[t+1], j);
-					}
+					obs = observation.get(instance.words[t+1], j);
 					sum += trans * obs * beta[t+1][j];
 				}
-				beta[t][i] = scale[t] * sum;
+				beta[t][i] = sum / scale[t];				
 			}
 		}
 		//MyArray.printTable(beta);
@@ -123,7 +116,7 @@ public class ForwardBackwardScaled extends ForwardBackward{
 			for(int i=0; i<nrStates; i++) {
 				denom += alpha[t][i] * beta[t][i];
 			}
-			
+			//System.out.println("Denom : " + denom);
 			for(int i=0; i<nrStates; i++) {
 				posterior[t][i] = alpha[t][i] * beta[t][i] / denom;
 			}

@@ -17,13 +17,15 @@ public class HMMParam {
 	
 	public void initializeZeros() {
 		initial = new Multinomial(nrStates, 1);
-		transition = new Multinomial(nrStates+1, nrStates);
+		//transition = new Multinomial(nrStates+1, nrStates);
+		transition = new Multinomial(nrStates, nrStates);
 		observation = new Multinomial(nrObs, nrStates);
 	}
 	
 	public void initialize(Random r) {
 		initial = new Multinomial(nrStates, 1);
-		transition = new Multinomial(nrStates+1, nrStates); //+1 for fake state
+		//transition = new Multinomial(nrStates+1, nrStates); //+1 for fake state
+		transition = new Multinomial(nrStates, nrStates); //+1 for fake state
 		observation = new Multinomial(nrObs, nrStates);
 		initial.initializeRandom(r);
 		transition.initializeRandom(r);

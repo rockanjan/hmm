@@ -13,8 +13,8 @@ public class Decoder {
 		int[] decoded = new int[instance.T];
 		instance.doInference(model);
 		
-		double[][] probLattice = new double[instance.T+1][model.nrStates];
-		int[][] stateLattice = new int[instance.T+1][model.nrStates];
+		double[][] probLattice = new double[instance.T][model.nrStates];
+		int[][] stateLattice = new int[instance.T][model.nrStates];
 		
 		for(int i=0; i<model.nrStates; i++) {
 			double init = model.param.initial.get(i, 0);
@@ -22,12 +22,14 @@ public class Decoder {
 			probLattice[0][i] = Math.log(init) + Math.log(obs);			
 		}
 		
+		double maxValue = -Double.MAX_VALUE;
+		int maxIndex = -1;
 		for(int t=1; t<instance.T; t++) {
 			for(int j=0; j<model.nrStates; j++) {
 				double obs = model.param.observation.get(instance.words[t], j);
 				
-				double maxValue = -Double.MAX_VALUE;
-				int maxIndex = -1;
+				maxValue = -Double.MAX_VALUE;
+				maxIndex = -1;
 				for(int i=0; i<model.nrStates; i++) {
 					double value = probLattice[t-1][i] + Math.log(model.param.transition.get(j, i)) + Math.log(obs);
 					if(value > maxValue) {
@@ -39,18 +41,14 @@ public class Decoder {
 				stateLattice[t][j] = maxIndex;
 			}
 		}
-		
-		//fake state : to consider which state at the last index of the sentence has higher transition prob to STOP fake state
-		double maxValue = -Double.MAX_VALUE;
-		int maxIndex = -1;
+		maxValue = -Double.MAX_VALUE;
+		maxIndex = -1;
 		for(int i=0; i<model.nrStates; i++) {
-			double value = probLattice[instance.T-1][i] + Math.log(model.param.transition.get(model.nrStates, i));
-			if(value > maxValue) {
-				maxValue = value;
-				maxIndex = i;
+			if(probLattice[instance.T-1][i] > maxValue) {
+				maxValue = probLattice[instance.T-1][i];
+				decoded[instance.T-1] = i;
 			}
 		}
-		decoded[instance.T-1] = maxIndex; 
 		//backtrack
 		for(int t=instance.T-2; t>=0; t--) {
 			decoded[t] = stateLattice[t+1][decoded[t+1]];			

@@ -5,6 +5,7 @@ import java.util.Random;
 import javax.management.RuntimeErrorException;
 
 import util.MyArray;
+import util.Stats;
 
 public class Multinomial {
 	//x,y == P(x given y)
@@ -40,10 +41,12 @@ public class Multinomial {
 	}
 	
 	private void smooth() {
-		double small = 1e-100;
+		//hyperparameter: eg. 1% of total tokens?
+		double small = 100;
 		for(int i=0; i<y; i++) {
 			for(int j=0; j<x; j++) {
 				if(count[j][i] == 0) {
+					Stats.totalFixes++;
 					count[j][i] = small;
 				}
 			}
@@ -68,6 +71,9 @@ public class Multinomial {
 					System.out.format("count[%d][%d] = %f\n", j,i,count[j][i]);
 					System.out.format("sum = %f\n", sum);
 					throw new RuntimeException("Probability after normalization is NaN");
+				}
+				if(count[j][i] == 0) {
+					//System.err.println("Prob distribution zero after normalization");
 				}
 			}
 		}

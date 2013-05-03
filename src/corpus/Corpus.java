@@ -27,11 +27,13 @@ public class Corpus {
 		BufferedReader br = new BufferedReader(new FileReader(inFile));
 		String line = null;
 		int totalWords = 0;
+		int totalUnknown = 0;
 		testInstanceList = new InstanceList();		 
 		while( (line = br.readLine()) != null ) {
 			line = line.trim();
 			if(! line.isEmpty()) {
 				Instance instance = new Instance(this, line);
+				totalUnknown += instance.unknownCount;
 				if(instance.words.length != 0) {
 					testInstanceList.add(instance);
 					totalWords += instance.words.length;
@@ -42,6 +44,7 @@ public class Corpus {
 		}
 		System.out.println("Test Instances: " + testInstanceList.size());
 		System.out.println("Test token count: " + totalWords);
+		System.out.println("Test unknown count : " + totalUnknown);
 		br.close();
 	}
 	
@@ -49,10 +52,12 @@ public class Corpus {
 		BufferedReader br = new BufferedReader(new FileReader(inFile));
 		String line = null;
 		int totalWords = 0;
+		int totalUnknown = 0;
 		while( (line = br.readLine()) != null ) {
 			line = line.trim();
 			if(! line.isEmpty()) {
 				Instance instance = new Instance(this, line);
+				totalUnknown += instance.unknownCount;
 				if(instance.words.length != 0) {
 					trainInstanceList.add(instance);
 					totalWords += instance.words.length;
@@ -63,12 +68,13 @@ public class Corpus {
 		}
 		System.out.println("Train Instances: " + trainInstanceList.size());
 		System.out.println("Train token count: " + totalWords);
+		System.out.println("Train unknown count : " + totalUnknown);
 		br.close();
 	}
 	
 	public void readVocab(String inFile) throws IOException {
 		corpusVocab = new Vocabulary();
-		corpusVocab.featureThreshold = vocabThreshold;
+		corpusVocab.vocabThreshold = vocabThreshold;
 		corpusVocab.readVocabFromFile(this, inFile);		
 	}
 	

@@ -11,4 +11,14 @@ public class MyArray {
 			System.out.println();
 		}
 	}
+	
+	public static void printTable(double[][] table, String title) {
+		System.out.println("Table : " + title);
+		for(int i=0; i<table.length; i++) {
+			for(int j=0; j<table[i].length; j++) {
+				System.out.print(table[i][j] + "\t");
+			}
+			System.out.println();
+		}
+	}
 }

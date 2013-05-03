@@ -26,23 +26,23 @@ public class Main {
 	static String testFile;
 	static String outFolderPrefix;
 	static int numStates; 	
-	static int vocabThreshold = 1;
+	static int vocabThreshold = 1; //only above this included
 	static HMM model;
 	static Corpus corpus;
 	
 	/** user parameters end **/
 	public static void main(String[] args) throws IOException {
 		outFolderPrefix = "/home/anjan/workspace/HMM/data/out/";
-		trainFile = "/home/anjan/workspace/HMM/data/train.txt.small.SPL";
+		trainFile = "/home/anjan/workspace/HMM/data/train.txt.SPL";
 		testFile = "/home/anjan/workspace/HMM/data/test.txt.SPL";
 		vocabFile = trainFile;
-		numStates = 2;
-		numIter = 10;
+		numStates = 80;
+		numIter = 100;
 		
 		printParams();
 		
 		//start
-		corpus = new Corpus("\\s+", 1);
+		corpus = new Corpus("\\s+", vocabThreshold);
 		corpus.readVocab(vocabFile);
 		corpus.readTrain(trainFile);
 		corpus.readTest(testFile);
@@ -58,6 +58,7 @@ public class Main {
 	}
 	
 	public static void test(HMM model, InstanceList instanceList, String outFile) {
+		System.out.println("Decoding Test Data");
 		Decoder decoder = new Decoder(model);
 		try {
 			PrintWriter pw = new PrintWriter(new FileWriter(outFile));

@@ -17,16 +17,18 @@ public class Instance {
 	Corpus c;	
 	public ForwardBackward forwardBackward;
 	public int nrStates;
+	public int unknownCount;
 	
 	public Instance(Corpus c, String line) {
 		this.c = c;
+		unknownCount = 0;
 		//read from line
 		populateWordArray(line);
 	}
 	
 	public void doInference(HMM model) {
-		forwardBackward = new ForwardBackwardNoScaling(model, this);
-		//forwardBackward = new ForwardBackwardScaled(model, this);
+		//forwardBackward = new ForwardBackwardNoScaling(model, this);
+		forwardBackward = new ForwardBackwardScaled(model, this);
 		nrStates = forwardBackward.model.nrStates;
 		forwardBackward.doInference();
 	}
@@ -64,10 +66,12 @@ public class Instance {
 				}
 			}
 		}
+		/*
 		//transition to fake state
 		for(int i=0; i<nrStates; i++) {
 			transition.addToCounts(nrStates, i, getStatePosterior(T-1, i));
 		}
+		*/
 	}
 	
 	/*
@@ -105,6 +109,9 @@ public class Instance {
 			}
 			int index = c.corpusVocab.getIndex(word);
 			if(index >= 0) {
+				if(index == 0) {
+					unknownCount += 1;
+				}
 				tempWordArray.add(index);
 			}
 		}

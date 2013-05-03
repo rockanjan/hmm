@@ -14,8 +14,8 @@ public class Vocabulary {
 	boolean debug = false;
 	boolean smooth = true;
 	boolean lower = true;
-	public int featureThreshold = 0;
-	//index zero reserved for __OOV__ (low freq features)
+	public int vocabThreshold = 1;
+	//index zero reserved for *unk* (low freq features)
 	
 	private int index = 1;
 	public int vocabSize = -1;
@@ -64,11 +64,38 @@ public class Vocabulary {
 			}
 		}
 		vocabSize = wordToIndex.size();
-		System.out.println("Vocab Size including UNKNOWN : " + vocabSize);
+		System.out.println("Vocab Size before reduction including UNKNOWN : " + vocabSize);
+		reduceVocab(c);
+		System.out.println("Vocab Size after reduction including UNKNOWN : " + vocabSize);
 		if(debug) {
 			c.debug();
-		}		
-		br.close();
+		}
+		br.close();		
+	}
+	
+	private void reduceVocab(Corpus c) {
+		System.out.println("Reducing vocab");
+		Map<String, Integer> wordToIndexNew = new HashMap<String, Integer>();
+		ArrayList<String> indexToWordNew = new ArrayList<String>();
+		Map<Integer, Integer> indexToFrequencyNew = new HashMap<Integer, Integer>();
+		wordToIndexNew.put(UNKNOWN, 0);
+		indexToFrequencyNew.put(0, -1); //TODO: decide if this matters
+		indexToWordNew.add(UNKNOWN);
+		int featureIndex = 1;
+		for(int i=1; i<indexToWord.size(); i++) {
+			if(indexToFrequency.get(i) > vocabThreshold) {
+				wordToIndexNew.put(indexToWord.get(i), featureIndex);
+				indexToWordNew.add(indexToWord.get(i));
+				indexToFrequencyNew.put(featureIndex, indexToFrequency.get(i));
+				featureIndex = featureIndex + 1;
+			}
+		}
+		indexToWord = null; indexToFrequency = null; wordToIndex = null;
+		indexToWord = indexToWordNew;
+		indexToFrequency = indexToFrequencyNew;
+		wordToIndex = wordToIndexNew;
+		vocabSize = wordToIndex.size();
+		//System.out.println("New vocab size : " + vocabSize);
 		
 	}
 	
