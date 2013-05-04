@@ -11,8 +11,9 @@ import model.param.HMMParamBase;
 import model.param.HMMParamNoFinalState;
 
 public abstract class HMMBase {
-	public int nrStates;
-	public int nrObs;
+	public int nrStatesWithFake = -1; //the extending class should initialize this (for no fake, equals nrStates)
+	public int nrStates = -1;
+	public int nrObs = -1;
 	public HMMParamBase param;
 	String baseDir = "out/model/";
 	
@@ -61,7 +62,7 @@ public abstract class HMMBase {
 			pw.println();
 			// transition
 			for (int i = 0; i < nrStates; i++) {
-				for (int j = 0; j < nrStates; j++) {
+				for (int j = 0; j < nrStatesWithFake; j++) {
 					pw.print(param.transition.get(j, i));
 					if (j != nrStates) {
 						pw.print(" ");
@@ -93,7 +94,12 @@ public abstract class HMMBase {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(location));
 			try{
-				this.nrStates = Integer.parseInt(br.readLine());
+				nrStates = Integer.parseInt(br.readLine());
+				if(hmmType == HMMType.WITH_FINAL_STATE) {
+					nrStatesWithFake = nrStates + 1;
+				} else if(hmmType == HMMType.WITH_NO_FINAL_STATE) {
+					nrStatesWithFake = nrStates;
+				}
 				this.nrObs = Integer.parseInt(br.readLine());
 				this.initializeZeros();
 				br.readLine();
@@ -111,9 +117,9 @@ public abstract class HMMBase {
 				//transition
 				for(int i=0; i<nrStates; i++) {
 					splitted = br.readLine().split("(\\s+|\\t+)");
-					if(nrStates != splitted.length) {
+					if(nrStatesWithFake != splitted.length) {
 						br.close();
-						System.err.format("nrStates=%d, from file=%d\n", nrStates, splitted.length);
+						System.err.format("For transition: nrStates=%d, from file=%d\n", nrStatesWithFake, splitted.length);
 						throw new RuntimeException("Loading model, transition parameters not matching number of states");
 					}
 					for(int j=0; j<splitted.length; j++) {

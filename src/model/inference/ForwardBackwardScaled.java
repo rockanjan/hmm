@@ -1,5 +1,7 @@
 package model.inference;
 
+import javax.management.RuntimeErrorException;
+
 import model.HMMBase;
 import model.HMMNoFinalState;
 import util.MyArray;
@@ -31,7 +33,7 @@ public class ForwardBackwardScaled extends ForwardBackward{
 	public void forward() {
 		alpha = new double[T][nrStates]; //+1 for fake state
 		logLikelihood = 0;
-		//for t=0
+		//initialization: for t=0
 		for(int i=0; i<nrStates; i++) {
 			double pi = initial.get(i, 0);
 			double obs = observation.get( instance.words[0], i);
@@ -39,7 +41,7 @@ public class ForwardBackwardScaled extends ForwardBackward{
 			
 			if(alpha[0][i] == 0) {
 				Stats.totalFixes++;
-				alpha[0][i] = 1e-320; //fix
+				alpha[0][i] = Double.MIN_VALUE; //fix
 				//System.err.format("ZERO alpha at initial. init = %f, obs=%f\n", pi, obs);
 			}
 			
@@ -57,6 +59,7 @@ public class ForwardBackwardScaled extends ForwardBackward{
 			MyArray.printTable(alpha);
 			throw new RuntimeException("logLikelihood at initial position in forward is NaN");
 		}
+		//induction
 		for(int t = 1; t < T; t++) {
 			for(int j=0; j<nrStates; j++) {
 				double transSum = 0;
@@ -69,7 +72,7 @@ public class ForwardBackwardScaled extends ForwardBackward{
 				
 				if(alpha[t][j] == 0) {
 					Stats.totalFixes++;
-					alpha[t][j] = 1e-320;//fix
+					alpha[t][j] = Double.MIN_VALUE;//fix
 				}				
 				scale[t] += alpha[t][j];
 				if(scale[t] == 0) {
@@ -127,7 +130,9 @@ public class ForwardBackwardScaled extends ForwardBackward{
 			for(int i=0; i<nrStates; i++) {
 				denom += alpha[t][i] * beta[t][i];
 			}
-			//System.out.println("Denom : " + denom);
+			if(denom == 0) {
+				throw new RuntimeException("Denominator zero while computing posterior"); 
+			}
 			for(int i=0; i<nrStates; i++) {
 				posterior[t][i] = alpha[t][i] * beta[t][i] / denom;
 			}

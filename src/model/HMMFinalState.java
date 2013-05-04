@@ -12,44 +12,44 @@ import model.param.HMMParamBase;
 import model.param.HMMParamFinalState;
 import model.param.HMMParamNoFinalState;
 
-public class HMMNoFinalState extends HMMBase{
-	public HMMNoFinalState() {
+public class HMMFinalState extends HMMBase{
+	public HMMFinalState() {
 		super();
-		this.hmmType = HMMType.WITH_NO_FINAL_STATE;
+		this.hmmType = HMMType.WITH_FINAL_STATE;
 	}
 
-	public HMMNoFinalState(int nrStates, int nrObs) {
+	public HMMFinalState(int nrStates, int nrObs) {
 		super();
-		this.nrStatesWithFake = nrStates;
 		this.nrStates = nrStates;
 		this.nrObs = nrObs;
-		this.hmmType = HMMType.WITH_NO_FINAL_STATE;
+		this.nrStatesWithFake = nrStates + 1;
+		this.hmmType = HMMType.WITH_FINAL_STATE;
 	}
 
 	public void initializeRandom(Random r) {
-		param = new HMMParamNoFinalState(nrStates, nrObs);
+		param = new HMMParamFinalState(nrStates, nrObs);
 		param.initialize(r);
 	}
 	
 	public void initializeZeros() {
-		param = new HMMParamNoFinalState(nrStates, nrObs);
+		param = new HMMParamFinalState(nrStates, nrObs);
 		param.initializeZeros();
 	}
 	
 	public static void main(String[] args) {
 		//check saving and loading model
-		int nrStates = 20;
-		int nrObs = 50;
-		HMMNoFinalState hmm = new HMMNoFinalState(nrStates, nrObs);
+		int nrStates = 80;
+		int nrObs = 200;
+		HMMFinalState hmm = new HMMFinalState(nrStates, nrObs);
 		hmm.initializeRandom(new Random());
-		HMMParamBase beforeSaving = new HMMParamNoFinalState(nrStates, nrObs);
+		HMMParamBase beforeSaving = new HMMParamFinalState(nrStates, nrObs);
 		beforeSaving.initializeZeros();
 		beforeSaving.cloneFrom(hmm.param);
 		String fileSaved = hmm.saveModel();
 		hmm.param.clear();
 		hmm = null;
 		
-		HMMNoFinalState loaded = new HMMNoFinalState();
+		HMMFinalState loaded = new HMMFinalState();
 		loaded.loadModel(fileSaved);
 		if(beforeSaving.equalsExact(loaded.param)) {
 			System.out.println("Saved and Loaded models match exactly");
