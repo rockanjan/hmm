@@ -1,7 +1,5 @@
 package model.inference;
 
-import javax.management.RuntimeErrorException;
-
 import model.HMMBase;
 import model.HMMNoFinalState;
 import util.MyArray;
@@ -19,7 +17,7 @@ public class ForwardBackwardScaled extends ForwardBackward{
 		initial = model.param.initial;
 		transition = model.param.transition;
 		observation = model.param.observation;		
-		scale = new double[T+1];		
+		scale = new double[T];		
 	}
 	
 	@Override

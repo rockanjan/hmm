@@ -4,6 +4,7 @@ import model.HMMBase;
 import model.HMMNoFinalState;
 import model.HMMType;
 import model.param.HMMParamBase;
+import model.param.HMMParamFinalState;
 import model.param.HMMParamNoFinalState;
 
 import util.Stats;
@@ -24,7 +25,7 @@ public class EM {
 	
 	int lowerCount = 0; //number of times LL could not increase from previous best
 	int iterCount = 0;
-	public EM(int numIter, Corpus c, HMMNoFinalState model) {
+	public EM(int numIter, Corpus c, HMMBase model) {
 		this.numIter = numIter;
 		this.c = c;
 		this.model = model;
@@ -33,6 +34,8 @@ public class EM {
 	public void eStep() {
 		if(model.hmmType == HMMType.WITH_NO_FINAL_STATE) {
 			expectedCounts = new HMMParamNoFinalState(model.nrStates, model.nrObs);
+		} else if(model.hmmType == HMMType.WITH_FINAL_STATE) {
+			expectedCounts = new HMMParamFinalState(model.nrStates, model.nrObs);
 		}
 		expectedCounts.initializeZeros();
 		for (int n=0; n<c.trainInstanceList.size(); n++) {
@@ -46,7 +49,7 @@ public class EM {
 	
 	public void mStep() {
 		model.updateFromCounts(expectedCounts);
-		//model.param.transition.printDistribution();
+		model.param.transition.printDistribution();
 		//model.param.initial.printDistribution();
 	}
 

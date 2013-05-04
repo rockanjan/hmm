@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Random;
 
+import model.HMMBase;
+import model.HMMFinalState;
 import model.HMMNoFinalState;
 import model.HMMType;
 import model.inference.Decoder;
@@ -28,7 +30,7 @@ public class Main {
 	static String outFolderPrefix;
 	static int numStates; 	
 	static int vocabThreshold = 1; //only above this included
-	static HMMNoFinalState model;
+	static HMMBase model;
 	static Corpus corpus;
 	
 	/** user parameters end **/
@@ -37,11 +39,13 @@ public class Main {
 		trainFile = "data/train.txt.SPL";
 		testFile = "data/test.txt.SPL";
 		vocabFile = trainFile;
-		numStates = 20;
+		numStates = 4;
 		numIter = 100;
 		String outFile = "out/decoded/test.decoded.txt";
 		String outFileTrain = "out/decoded/train.decoded.txt";
-		HMMType modelType = HMMType.WITH_NO_FINAL_STATE;
+		//HMMType modelType = HMMType.WITH_NO_FINAL_STATE;
+		HMMType modelType = HMMType.WITH_FINAL_STATE;
+		
 		printParams();
 		//start
 		corpus = new Corpus("\\s+", vocabThreshold);
@@ -52,6 +56,8 @@ public class Main {
 		corpus.saveVocabFile(outFolderPrefix + "/model/vocab.txt");
 		if(modelType == HMMType.WITH_NO_FINAL_STATE) {
 			model = new HMMNoFinalState(numStates, corpus.corpusVocab.vocabSize);
+		} else if(modelType == HMMType.WITH_FINAL_STATE) {
+			model = new HMMFinalState(numStates, corpus.corpusVocab.vocabSize);
 		}
 		Random r = new Random(seed);
 		model.initializeRandom(r);
@@ -65,7 +71,7 @@ public class Main {
 		test(model, corpus.trainInstanceList, outFileTrain);
 	}
 	
-	public static void test(HMMNoFinalState model, InstanceList instanceList, String outFile) {
+	public static void test(HMMBase model, InstanceList instanceList, String outFile) {
 		System.out.println("Decoding Data");
 		Decoder decoder = new Decoder(model);
 		try {

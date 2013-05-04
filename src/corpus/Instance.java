@@ -5,9 +5,8 @@ import java.util.ArrayList;
 import util.SmoothWord;
 
 import model.HMMBase;
-import model.HMMNoFinalState;
+import model.HMMType;
 import model.inference.ForwardBackward;
-import model.inference.ForwardBackwardNoScaling;
 import model.inference.ForwardBackwardScaled;
 import model.param.HMMParamBase;
 import model.param.Multinomial;
@@ -67,12 +66,12 @@ public class Instance {
 				}
 			}
 		}
-		/*
-		//transition to fake state
-		for(int i=0; i<nrStates; i++) {
-			transition.addToCounts(nrStates, i, getStatePosterior(T-1, i));
+		if(forwardBackward.model.hmmType == HMMType.WITH_FINAL_STATE) {
+			//transition to fake state
+			for(int i=0; i<nrStates; i++) {
+				transition.addToCounts(nrStates, i, getStatePosterior(T-1, i));
+			}
 		}
-		*/
 	}
 	
 	/*
