@@ -1,12 +1,14 @@
-package model;
+package model.inference;
 
+import model.HMMBase;
+import model.HMMNoFinalState;
 import util.MyArray;
 import util.Stats;
 import corpus.Instance;
 
 public class ForwardBackwardScaled extends ForwardBackward{
 	double[] scale;
-	public ForwardBackwardScaled(HMM model, Instance instance) {
+	public ForwardBackwardScaled(HMMBase model, Instance instance) {
 		super();
 		this.model = model;
 		this.instance = instance;

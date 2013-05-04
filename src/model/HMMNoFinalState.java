@@ -8,29 +8,28 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Random;
 
-public class HMM {
+import model.param.HMMParamBase;
+import model.param.HMMParamNoFinalState;
 
-	public int nrStates;
-	public int nrObs;
-	public HMMParam param;
-	String baseDir = "out/model/";
-	
-	public HMM() {
-		
+public class HMMNoFinalState extends HMMBase{
+	public HMMNoFinalState() {
+		super();
 	}
 
-	public HMM(int nrStates, int nrObs) {
+	public HMMNoFinalState(int nrStates, int nrObs) {
+		super();
 		this.nrStates = nrStates;
 		this.nrObs = nrObs;
+		this.hmmType = HMMType.WITH_NO_FINAL_STATE;
 	}
 
 	public void initializeRandom(Random r) {
-		param = new HMMParam(nrStates, nrObs);
+		param = new HMMParamNoFinalState(nrStates, nrObs);
 		param.initialize(r);
 	}
 	
 	public void initializeZeros() {
-		param = new HMMParam(nrStates, nrObs);
+		param = new HMMParamNoFinalState(nrStates, nrObs);
 		param.initializeZeros();
 	}
 
@@ -38,7 +37,7 @@ public class HMM {
 		param.check();
 	}
 
-	public void updateFromCounts(HMMParam counts) {
+	public void updateFromCounts(HMMParamBase counts) {
 		counts.normalize();
 		param.cloneFrom(counts);
 	}
@@ -165,9 +164,9 @@ public class HMM {
 		}
 	}
 	
-	public void clone(HMM other) {
+	public void clone(HMMNoFinalState other) {
 		if(this.param == null) {
-			this.param = new HMMParam(nrStates, nrObs);
+			this.param = new HMMParamNoFinalState(nrStates, nrObs);
 		}
 		this.param.cloneFrom(other.param);
 	}
@@ -177,16 +176,16 @@ public class HMM {
 		//check saving and loading model
 		int nrStates = 20;
 		int nrObs = 50;
-		HMM hmm = new HMM(nrStates, nrObs);
+		HMMNoFinalState hmm = new HMMNoFinalState(nrStates, nrObs);
 		hmm.initializeRandom(new Random());
-		HMMParam beforeSaving = new HMMParam(nrStates, nrObs);
+		HMMParamBase beforeSaving = new HMMParamNoFinalState(nrStates, nrObs);
 		beforeSaving.initializeZeros();
 		beforeSaving.cloneFrom(hmm.param);
 		String fileSaved = hmm.saveModel();
 		hmm.param.clear();
 		hmm = null;
 		
-		HMM loaded = new HMM();
+		HMMNoFinalState loaded = new HMMNoFinalState();
 		loaded.loadModel(fileSaved);
 		if(beforeSaving.equalsExact(loaded.param)) {
 			System.out.println("Saved and Loaded models match exactly");

@@ -1,11 +1,12 @@
-package model;
+package model.inference;
 
+import model.HMMNoFinalState;
 import util.MyArray;
 import corpus.Instance;
 
 public class Decoder {
-	HMM model;
-	public Decoder(HMM model) {
+	HMMNoFinalState model;
+	public Decoder(HMMNoFinalState model) {
 		this.model = model;
 	}
 	

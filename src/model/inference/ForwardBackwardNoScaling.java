@@ -1,11 +1,12 @@
-package model;
+package model.inference;
 
+import model.HMMNoFinalState;
 import util.MyArray;
 import corpus.Instance;
 
 public class ForwardBackwardNoScaling extends ForwardBackward{
 	public double likelihood;
-	public ForwardBackwardNoScaling(HMM model, Instance instance) {
+	public ForwardBackwardNoScaling(HMMNoFinalState model, Instance instance) {
 		super();
 		this.model = model;
 		this.instance = instance;

@@ -1,10 +1,13 @@
-package model;
+package model.inference;
 
+import model.HMMBase;
+import model.HMMNoFinalState;
+import model.param.Multinomial;
 import corpus.Instance;
 
 public abstract class ForwardBackward {
 	
-	public HMM model;
+	public HMMBase model;
 	Instance instance;
 	public double logLikelihood;
 	public double alpha[][];

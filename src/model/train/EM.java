@@ -1,6 +1,10 @@
-package model;
+package model.train;
 
-import java.text.DecimalFormat;
+import model.HMMBase;
+import model.HMMNoFinalState;
+import model.HMMType;
+import model.param.HMMParamBase;
+import model.param.HMMParamNoFinalState;
 
 import util.Stats;
 import util.Timing;
@@ -11,23 +15,25 @@ public class EM {
 
 	int numIter;
 	Corpus c;
-	HMM model;
+	HMMBase model;
 	
 	double bestOldLL = -Double.MAX_VALUE;
 	double LL = 0;
 	
-	HMMParam expectedCounts;
+	HMMParamBase expectedCounts;
 	
 	int lowerCount = 0; //number of times LL could not increase from previous best
 	int iterCount = 0;
-	public EM(int numIter, Corpus c, HMM model) {
+	public EM(int numIter, Corpus c, HMMNoFinalState model) {
 		this.numIter = numIter;
 		this.c = c;
 		this.model = model;
 	}
 	
 	public void eStep() {
-		expectedCounts = new HMMParam(model.nrStates, model.nrObs);
+		if(model.hmmType == HMMType.WITH_NO_FINAL_STATE) {
+			expectedCounts = new HMMParamNoFinalState(model.nrStates, model.nrObs);
+		}
 		expectedCounts.initializeZeros();
 		for (int n=0; n<c.trainInstanceList.size(); n++) {
 			Instance instance = c.trainInstanceList.get(n);

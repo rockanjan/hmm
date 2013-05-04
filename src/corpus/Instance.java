@@ -4,12 +4,13 @@ import java.util.ArrayList;
 
 import util.SmoothWord;
 
-import model.ForwardBackward;
-import model.ForwardBackwardNoScaling;
-import model.ForwardBackwardScaled;
-import model.HMM;
-import model.HMMParam;
-import model.Multinomial;
+import model.HMMBase;
+import model.HMMNoFinalState;
+import model.inference.ForwardBackward;
+import model.inference.ForwardBackwardNoScaling;
+import model.inference.ForwardBackwardScaled;
+import model.param.HMMParamBase;
+import model.param.Multinomial;
 
 public class Instance {
 	public int[] words;
@@ -26,7 +27,7 @@ public class Instance {
 		populateWordArray(line);
 	}
 	
-	public void doInference(HMM model) {
+	public void doInference(HMMBase model) {
 		//forwardBackward = new ForwardBackwardNoScaling(model, this);
 		forwardBackward = new ForwardBackwardScaled(model, this);
 		nrStates = forwardBackward.model.nrStates;
@@ -38,7 +39,7 @@ public class Instance {
 		forwardBackward = null;
 	}
 	
-	public void addToCounts(HMMParam param) { 
+	public void addToCounts(HMMParamBase param) { 
 		addToInitial(param.initial);
 		addToObservation(param.observation);
 		addToTransition(param.transition);
