@@ -34,12 +34,17 @@ public class ForwardBackwardScaled extends ForwardBackward{
 			double pi = initial.get(i, 0);
 			double obs = observation.get( instance.words[0], i);
 			alpha[0][i] = pi * obs;
+			
 			if(alpha[0][i] == 0) {
 				Stats.totalFixes++;
-				alpha[0][i] = 1e-300; //fix
+				alpha[0][i] = 1e-320; //fix
 				//System.err.format("ZERO alpha at initial. init = %f, obs=%f\n", pi, obs);
 			}
+			
 			scale[0] += alpha[0][i];
+			if(scale[0] == 0) {
+				throw new RuntimeException("Scale at initial position zero in forward");
+			}
 		}
 		for(int i=0; i<nrStates; i++) {
 			alpha[0][i] = alpha[0][i] / scale[0];
@@ -59,11 +64,15 @@ public class ForwardBackwardScaled extends ForwardBackward{
 				double obs;
 				obs = observation.get(instance.words[t], j);
 				alpha[t][j] = transSum * obs;
+				
 				if(alpha[t][j] == 0) {
 					Stats.totalFixes++;
-					alpha[t][j] = 1e-300;//fix
-				}
+					alpha[t][j] = 1e-320;//fix
+				}				
 				scale[t] += alpha[t][j];
+				if(scale[t] == 0) {
+					throw new RuntimeException("scale zero in forward");
+				}
 			}
 			//scale
 			for(int j=0; j<nrStates; j++) {

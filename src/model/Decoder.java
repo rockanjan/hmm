@@ -53,7 +53,8 @@ public class Decoder {
 		for(int t=instance.T-2; t>=0; t--) {
 			decoded[t] = stateLattice[t+1][decoded[t+1]];			
 		}
-		//MyArray.printTable(probLattice);	
+		//MyArray.printTable(probLattice);
+		instance.clearInference();
 		return decoded;
 	}
 	

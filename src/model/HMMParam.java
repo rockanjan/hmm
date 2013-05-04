@@ -49,4 +49,28 @@ public class HMMParam {
 		observation.cloneFrom(source.observation);
 		transition.cloneFrom(source.transition);
 	}
+	
+	public void clear() {
+		initial = null;
+		transition = null;
+		observation = null;
+	}
+	
+	@Override
+	public boolean equals(Object other) {
+		System.err.println("NOT IMPLEMENTED");
+		return false;
+	}
+	
+	public boolean equalsExact(HMMParam other) {
+		return (this.initial.equalsExact(other.initial) &&
+				this.transition.equalsExact(other.transition) &&
+				this.observation.equalsExact(other.observation));
+	}
+	
+	public boolean equalsApprox(HMMParam other) {
+		return (this.initial.equalsApprox(other.initial) &&
+				this.transition.equalsApprox(other.transition) &&
+				this.observation.equalsApprox(other.observation));
+	}
 }

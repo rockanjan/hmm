@@ -32,13 +32,14 @@ public class Main {
 	
 	/** user parameters end **/
 	public static void main(String[] args) throws IOException {
-		outFolderPrefix = "/home/anjan/workspace/HMM/data/out/";
-		trainFile = "/home/anjan/workspace/HMM/data/train.txt.SPL";
-		testFile = "/home/anjan/workspace/HMM/data/test.txt.SPL";
+		outFolderPrefix = "out/";
+		trainFile = "data/train.txt.SPL";
+		testFile = "data/test.txt.SPL";
 		vocabFile = trainFile;
-		numStates = 80;
+		numStates = 20;
 		numIter = 100;
-		
+		String outFile = "out/decoded/test.decoded.txt";
+		String outFileTrain = "out/decoded/train.decoded.txt";
 		printParams();
 		
 		//start
@@ -46,19 +47,23 @@ public class Main {
 		corpus.readVocab(vocabFile);
 		corpus.readTrain(trainFile);
 		corpus.readTest(testFile);
+		//save vocab file
+		corpus.saveVocabFile(outFolderPrefix + "/model/vocab.txt");
 		model = new HMM(numStates, corpus.corpusVocab.vocabSize);
 		Random r = new Random(seed);
 		model.initializeRandom(r);
 		EM em = new EM(numIter, corpus, model);
 		//start training with EM
 		em.start();
-		
-		String outFile = "/home/anjan/workspace/HMM/out/decoded/test.decoded.txt";
-		test(model, corpus.testInstanceList, outFile);
+		//test
+		//model = new HMM();
+		//model.loadModel("/home/anjan/workspace/HMM/out/model/model_iter_48_states_400.txt");
+		test(model, corpus.testInstanceList, outFile);		
+		test(model, corpus.trainInstanceList, outFileTrain);
 	}
 	
 	public static void test(HMM model, InstanceList instanceList, String outFile) {
-		System.out.println("Decoding Test Data");
+		System.out.println("Decoding Data");
 		Decoder decoder = new Decoder(model);
 		try {
 			PrintWriter pw = new PrintWriter(new FileWriter(outFile));
@@ -77,9 +82,9 @@ public class Main {
 			System.err.format("Could not open file for writing %s\n", outFile);
 			e.printStackTrace();
 		}
-		System.out.println("Finished Test decoding");
+		System.out.println("Finished decoding");
 	}
-		
+	
 	public static void printParams() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("Train file : " + trainFile);

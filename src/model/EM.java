@@ -19,7 +19,7 @@ public class EM {
 	HMMParam expectedCounts;
 	
 	int lowerCount = 0; //number of times LL could not increase from previous best
-	
+	int iterCount = 0;
 	public EM(int numIter, Corpus c, HMM model) {
 		this.numIter = numIter;
 		this.c = c;
@@ -50,7 +50,7 @@ public class EM {
 		totalEMTime.start();
 		Timing eStepTime = new Timing();
 		
-		for (int iterCount=0 ; iterCount < numIter; iterCount++) {
+		for (iterCount=0; iterCount < numIter; iterCount++) {
 			LL = 0;
 			//e-step
 			eStepTime.start();
@@ -60,24 +60,32 @@ public class EM {
 				System.out.format("LL %.2f Diff %.2f \t Iter %d \t Fixes: %d \t E-step time %s\n", LL, (LL - bestOldLL), iterCount, Stats.totalFixes, eStepTime.stop());
 			}
 			Stats.totalFixes = 0;
-			//m-step
-			mStep();
 			if(isConverged()) {
 				break;
-			}			
+			}
+			//m-step
+			mStep();						
 		}
 		System.out.println("Total EM Time : " + totalEMTime.stop());
 	}
 	
 	public boolean isConverged() {
-		double precision = 1e-6;
+		double precision = 1e-5;
 		double decreaseRatio = (LL - bestOldLL)/Math.abs(bestOldLL);
-		System.out.println("Decrease Ratio: " + decreaseRatio);
+		//System.out.println("Decrease Ratio: %.5f " + decreaseRatio);
 		if(precision > decreaseRatio && decreaseRatio > 0) {
+			System.out.println("Converged. Saving the final model");
+			model.saveModel(iterCount);
+			model.saveModel(-1); //final
 			return true;
 		}
 		
 		if(LL < bestOldLL) {
+			if(lowerCount == 0) {
+				//save the best model so far
+				System.out.println("Saving the best model so far");
+				model.saveModel(iterCount);
+			}
 			lowerCount++;
 			if(lowerCount == 3) {
 				System.out.println("Converged: LL could not increase for three iterations");

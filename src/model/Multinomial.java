@@ -36,12 +36,16 @@ public class Multinomial {
 		return count[x][y];
 	}
 	
+	public void set(int x, int y, double value) {
+		count[x][y] = value;
+	}
+	
 	public void addToCounts(int x, int y, double value) {
 		count[x][y] += value;
 	}
 	
 	private void smooth() {
-		//hyperparameter: eg. 1% of total tokens?
+		//hyperparameter
 		double small = 100;
 		for(int i=0; i<y; i++) {
 			for(int j=0; j<x; j++) {
@@ -50,7 +54,7 @@ public class Multinomial {
 					count[j][i] = small;
 				}
 			}
-		}
+		}		
 	}
 	
 	public void normalize() {
@@ -110,7 +114,34 @@ public class Multinomial {
 		}
 	}
 	
+	public boolean equalsExact(Multinomial other) {
+		boolean result = true;
+		for(int i=0; i<y; i++) {
+			for(int j=0; j<x; j++) {
+				if(count[j][i] == other.get(j,i)) {
+					result = false;
+				}
+			}
+		}
+		return result;
+	}
+	
+	public boolean equalsApprox(Multinomial other) {
+		double precision = 1e-200;
+		boolean result = true;
+		for(int i=0; i<y; i++) {
+			for(int j=0; j<x; j++) {
+				if(Math.abs(count[j][i] - other.get(j,i)) > precision) {
+					result = false;
+				}
+			}
+		}
+		return result;
+	}
+	
+	
+	
 	public void printDistribution() {
 		MyArray.printTable(count);
-	}
+	}	
 }

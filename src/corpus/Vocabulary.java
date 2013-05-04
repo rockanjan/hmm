@@ -41,7 +41,7 @@ public class Vocabulary {
 		return returnId;
 	}
 	
-	public void readVocabFromFile(Corpus c, String filename) throws IOException {
+	public void readVocabFromCorpus(Corpus c, String filename) throws IOException {
 		BufferedReader br = new BufferedReader(new FileReader(filename));
 		String line = null;
 		wordToIndex.put(UNKNOWN, 0);
