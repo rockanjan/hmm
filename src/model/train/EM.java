@@ -48,8 +48,9 @@ public class EM {
 	}
 	
 	public void mStep() {
+		//expectedCounts.transition.printDistribution();
 		model.updateFromCounts(expectedCounts);
-		model.param.transition.printDistribution();
+		//model.param.transition.printDistribution();
 		//model.param.initial.printDistribution();
 	}
 
@@ -79,7 +80,7 @@ public class EM {
 	}
 	
 	public boolean isConverged() {
-		double precision = 1e-5;
+		double precision = 1e-6;
 		double decreaseRatio = (LL - bestOldLL)/Math.abs(bestOldLL);
 		//System.out.println("Decrease Ratio: %.5f " + decreaseRatio);
 		if(precision > decreaseRatio && decreaseRatio > 0) {

@@ -2,6 +2,7 @@ package model.inference;
 
 import model.HMMBase;
 import model.HMMNoFinalState;
+import model.HMMType;
 import util.MyArray;
 import corpus.Instance;
 
@@ -34,6 +35,10 @@ public class Decoder {
 				maxIndex = -1;
 				for(int i=0; i<model.nrStates; i++) {
 					double value = probLattice[t-1][i] + Math.log(model.param.transition.get(j, i)) + Math.log(obs);
+					if(model.hmmType == HMMType.WITH_FINAL_STATE && t == instance.T-1) {
+						//also include the transition to the final state
+						value += Math.log(model.param.transition.get(model.nrStates, j));
+					}
 					if(value > maxValue) {
 						maxValue = value;
 						maxIndex = i;

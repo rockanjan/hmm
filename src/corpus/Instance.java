@@ -69,7 +69,8 @@ public class Instance {
 		if(forwardBackward.model.hmmType == HMMType.WITH_FINAL_STATE) {
 			//transition to fake state
 			for(int i=0; i<nrStates; i++) {
-				transition.addToCounts(nrStates, i, getStatePosterior(T-1, i));
+				//System.out.println(getStatePosterior(T-1, i));
+				transition.addToCounts(nrStates, i, getStatePosterior(T-1, i)/c.totalWords);
 			}
 		}
 	}

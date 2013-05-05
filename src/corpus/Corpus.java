@@ -18,6 +18,8 @@ public class Corpus {
 	public Vocabulary corpusVocab;
 
 	int vocabThreshold;
+	
+	public int totalWords; 
 
 	public Corpus(String delimiter, int vocabThreshold) {
 		this.delimiter = delimiter;
@@ -53,7 +55,7 @@ public class Corpus {
 	public void readTrain(String inFile) throws IOException {
 		BufferedReader br = new BufferedReader(new FileReader(inFile));
 		String line = null;
-		int totalWords = 0;
+		totalWords = 0;
 		int totalUnknown = 0;
 		while ((line = br.readLine()) != null) {
 			line = line.trim();
