@@ -39,24 +39,30 @@ public class Main {
 		trainFile = "data/train.txt.SPL";
 		testFile = "data/test.txt.SPL";
 		vocabFile = trainFile;
-		numStates = 40;
+		numStates = 80;
 		numIter = 100;
 		String outFile = "out/decoded/test.decoded.txt";
 		String outFileTrain = "out/decoded/train.decoded.txt";
-		//HMMType modelType = HMMType.WITH_NO_FINAL_STATE;
-		HMMType modelType = HMMType.WITH_FINAL_STATE;
+		HMMType modelType = HMMType.WITH_NO_FINAL_STATE;
+		//HMMType modelType = HMMType.WITH_FINAL_STATE;
 		
 		printParams();
-		//start
 		corpus = new Corpus("\\s+", vocabThreshold);
+		
+		//TRAIN
+		
 		corpus.readVocab(vocabFile);
 		corpus.readTrain(trainFile);
 		corpus.readTest(testFile);
 		//save vocab file
 		corpus.saveVocabFile(outFolderPrefix + "/model/vocab.txt");
 		if(modelType == HMMType.WITH_NO_FINAL_STATE) {
+			System.out.println("HMM with no final state");
 			model = new HMMNoFinalState(numStates, corpus.corpusVocab.vocabSize);
 		} else if(modelType == HMMType.WITH_FINAL_STATE) {
+			System.out.println("HMM with final state");
+			System.out.println("NOT WORKING");
+			System.exit(-1);
 			model = new HMMFinalState(numStates, corpus.corpusVocab.vocabSize);
 		}
 		Random r = new Random(seed);
@@ -64,11 +70,47 @@ public class Main {
 		EM em = new EM(numIter, corpus, model);
 		//start training with EM
 		em.start();
-		//test
-		//model = new HMM();
-		//model.loadModel("/home/anjan/workspace/HMM/out/model/model_iter_48_states_400.txt");
+		
+		
+		/*
+		//TEST
+		corpus.readVocabFromDictionary("out/model/vocab.txt");
+		corpus.readTrain(trainFile);
+		corpus.readTest(testFile);
+		model = new HMMNoFinalState();
+		model.loadModel("/home/anjan/workspace/HMM/out/model/model_iter_53_states_80.txt");
+		*/
 		test(model, corpus.testInstanceList, outFile);		
 		test(model, corpus.trainInstanceList, outFileTrain);
+		testPosteriorDistribution(model, corpus.testInstanceList, outFile + ".posterior_distribution");
+	}
+	
+	public static void testPosteriorDistribution(HMMBase model, InstanceList instanceList, String outFile) {
+		System.out.println("Decoding Posterior distribution");
+		Decoder decoder = new Decoder(model);
+		try {
+			PrintWriter pw = new PrintWriter(new FileWriter(outFile));
+			for(int n=0; n<instanceList.size(); n++) {
+				Instance instance = instanceList.get(n);
+				double[][] decoded = decoder.posteriorDistribution(instance);
+				for(int t=0; t<decoded.length; t++) {
+					String word = instance.getWord(t);
+					pw.print(word + " ");
+					for(int i=0; i<decoded[t].length; i++) {
+						pw.print(decoded[t][i]);
+						if(i != model.nrStates) {
+							pw.print(" ");
+						}
+					}
+				}
+				pw.println();
+			}
+			pw.close();
+		} catch (IOException e) {
+			System.err.format("Could not open file for writing %s\n", outFile);
+			e.printStackTrace();
+		}
+		System.out.println("Finished decoding");
 	}
 	
 	public static void test(HMMBase model, InstanceList instanceList, String outFile) {

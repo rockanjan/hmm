@@ -21,6 +21,11 @@ public class EM {
 	double bestOldLL = -Double.MAX_VALUE;
 	double LL = 0;
 	
+	
+	//convergence criteria
+	double precision = 1e-6;
+	int maxConsecutiveDecreaseLimit = 5;
+	
 	HMMParamBase expectedCounts;
 	
 	int lowerCount = 0; //number of times LL could not increase from previous best
@@ -80,7 +85,7 @@ public class EM {
 	}
 	
 	public boolean isConverged() {
-		double precision = 1e-6;
+		
 		double decreaseRatio = (LL - bestOldLL)/Math.abs(bestOldLL);
 		//System.out.println("Decrease Ratio: %.5f " + decreaseRatio);
 		if(precision > decreaseRatio && decreaseRatio > 0) {
@@ -97,8 +102,8 @@ public class EM {
 				model.saveModel(iterCount);
 			}
 			lowerCount++;
-			if(lowerCount == 3) {
-				System.out.println("Converged: LL could not increase for three iterations");
+			if(lowerCount == maxConsecutiveDecreaseLimit) {
+				System.out.format("Converged: LL could not increase for %d iterations", maxConsecutiveDecreaseLimit);
 				return true;
 			}
 			return false;

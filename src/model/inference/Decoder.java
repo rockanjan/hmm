@@ -85,4 +85,15 @@ public class Decoder {
 		}
 		return decoded;
 	}
+	
+	public double[][] posteriorDistribution(Instance instance) {
+		double[][] decoded = new double[instance.T][model.nrStates];
+		instance.doInference(model);
+		for(int t=0; t<instance.T; t++) {
+			for(int i=0; i<model.nrStates; i++) {
+				decoded[t][i] = instance.forwardBackward.posterior[t][i];
+			}
+		}
+		return decoded;
+	}
 }

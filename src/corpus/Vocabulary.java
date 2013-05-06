@@ -120,6 +120,7 @@ public class Vocabulary {
 				}
 				addItem(line);
 			}
+			System.out.println("Loaded Vocab Size : " + wordToIndex.size());
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.err.println("error reading vocab file");

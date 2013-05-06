@@ -70,7 +70,9 @@ public class Instance {
 			//transition to fake state
 			for(int i=0; i<nrStates; i++) {
 				//System.out.println(getStatePosterior(T-1, i));
-				transition.addToCounts(nrStates, i, getStatePosterior(T-1, i)/c.totalWords);
+				//double value = getStatePosterior(T-1, i)/c.totalWords;
+				//double value = forwardBackward.alpha[T-1][i] * forwardBackward.model.param.transition.get(nrStates, i);
+				//transition.addToCounts(nrStates, i, value);
 			}
 		}
 	}
