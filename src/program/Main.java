@@ -1,6 +1,5 @@
 package program;
 
-import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,14 +14,13 @@ import model.train.EM;
 import corpus.Corpus;
 import corpus.Instance;
 import corpus.InstanceList;
-import corpus.Vocabulary;
 
 public class Main {
 	
 	/** user parameters **/
 	static String delimiter = "\\+";
 	static int numIter;
-	static long seed = 1;
+	static long seed = 37;
 	
 	static String trainFile;
 	static String vocabFile;
@@ -39,12 +37,12 @@ public class Main {
 		trainFile = "data/train.txt.SPL";
 		testFile = "data/test.txt.SPL";
 		vocabFile = trainFile;
-		numStates = 80;
+		numStates = 4;
 		numIter = 100;
 		String outFile = "out/decoded/test.decoded.txt";
 		String outFileTrain = "out/decoded/train.decoded.txt";
-		HMMType modelType = HMMType.WITH_NO_FINAL_STATE;
-		//HMMType modelType = HMMType.WITH_FINAL_STATE;
+		//HMMType modelType = HMMType.WITH_NO_FINAL_STATE;
+		HMMType modelType = HMMType.WITH_FINAL_STATE;
 		
 		printParams();
 		corpus = new Corpus("\\s+", vocabThreshold);
@@ -102,6 +100,7 @@ public class Main {
 							pw.print(" ");
 						}
 					}
+					pw.println();
 				}
 				pw.println();
 			}

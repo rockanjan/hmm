@@ -6,7 +6,6 @@ import model.param.Multinomial;
 import corpus.Instance;
 
 public abstract class ForwardBackward {
-	
 	public HMMBase model;
 	Instance instance;
 	public double logLikelihood;

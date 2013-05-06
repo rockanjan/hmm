@@ -103,7 +103,7 @@ public class EM {
 			}
 			lowerCount++;
 			if(lowerCount == maxConsecutiveDecreaseLimit) {
-				System.out.format("Converged: LL could not increase for %d iterations", maxConsecutiveDecreaseLimit);
+				System.out.format("Converged: LL could not increase for %d iterations\n", maxConsecutiveDecreaseLimit);
 				return true;
 			}
 			return false;
