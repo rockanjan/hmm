@@ -27,12 +27,12 @@ public class HMMFinalState extends HMMBase{
 	}
 
 	public void initializeRandom(Random r) {
-		param = new HMMParamFinalState(nrStates, nrObs);
+		param = new HMMParamFinalState(this);
 		param.initialize(r);
 	}
 	
 	public void initializeZeros() {
-		param = new HMMParamFinalState(nrStates, nrObs);
+		param = new HMMParamFinalState(this);
 		param.initializeZeros();
 	}
 	
@@ -42,7 +42,7 @@ public class HMMFinalState extends HMMBase{
 		int nrObs = 200;
 		HMMFinalState hmm = new HMMFinalState(nrStates, nrObs);
 		hmm.initializeRandom(new Random());
-		HMMParamBase beforeSaving = new HMMParamFinalState(nrStates, nrObs);
+		HMMParamBase beforeSaving = new HMMParamFinalState(hmm);
 		beforeSaving.initializeZeros();
 		beforeSaving.cloneFrom(hmm.param);
 		String fileSaved = hmm.saveModel();

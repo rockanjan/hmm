@@ -9,7 +9,7 @@ import model.HMMType;
 import model.inference.ForwardBackward;
 import model.inference.ForwardBackwardScaled;
 import model.param.HMMParamBase;
-import model.param.Multinomial;
+import model.param.MultinomialRegular;
 
 public class Instance {
 	public int[] words;
@@ -36,68 +36,7 @@ public class Instance {
 	public void clearInference() {
 		forwardBackward.clear();
 		forwardBackward = null;
-	}
-	
-	public void addToCounts(HMMParamBase param) { 
-		addToInitial(param.initial);
-		addToObservation(param.observation);
-		addToTransition(param.transition);
-	}
-	
-	public void addToInitial(Multinomial initial) {
-		for(int i=0; i<nrStates; i++) {
-			initial.addToCounts(i, 0, getStatePosterior(0, i));
-		}
-	}
-	
-	public void addToObservation(Multinomial observation) {
-		for(int t=0; t<T; t++) {
-			for(int i=0; i<nrStates; i++) {
-				observation.addToCounts(words[t], i, getStatePosterior(t, i));
-			}
-		}
-	}
-	
-	public void addToTransition(Multinomial transition) {
-		for(int t=0; t<T-1; t++) {
-			double normalizer = 0.0;
-			for(int i=0; i<nrStates; i++) {
-				for(int j=0; j<nrStates; j++) {
-					normalizer += getTransitionPosterior(i, j, t);
-				}
-			}
-			
-			for(int i=0; i<nrStates; i++) {
-				for(int j=0; j<nrStates; j++) {
-					transition.addToCounts(i, j, getTransitionPosterior(i, j, t) / normalizer);
-				}
-			}
-		}
-		if(forwardBackward.model.hmmType == HMMType.WITH_FINAL_STATE) {
-			//transition to fake state
-			for(int i=0; i<nrStates; i++) {
-				//double value = getStatePosterior(T-1, i) * forwardBackward.model.param.transition.get(nrStates, i);
-				//transition.addToCounts(nrStates, i, value);
-			}
-		}
-	}
-	
-	/*
-	 * Gives the transition posterior probability
-	 */
-	public double getTransitionPosterior(int currentState, int nextState, int position) {
-		//xi in Rabiner Tutorial
-		double alpha = forwardBackward.alpha[position][currentState];
-		double trans = forwardBackward.model.param.transition.get(nextState, currentState); //transition to next given current
-		double obs = forwardBackward.model.param.observation.get(words[position+1], nextState);
-		double beta = forwardBackward.beta[position+1][nextState];		
-		double value = alpha * trans * obs * beta;
-		return value;
-	}
-	
-	public double getStatePosterior(int t, int s) {
-		return forwardBackward.posterior[t][s];
-	}
+	}	
 	
 	public String getWord(int position) {
 		return c.corpusVocab.indexToWord.get(words[position]);

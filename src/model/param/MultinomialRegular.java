@@ -7,16 +7,12 @@ import javax.management.RuntimeErrorException;
 import util.MyArray;
 import util.Stats;
 
-public class Multinomial {
-	//x,y == P(x given y)
-	int x,y;
-	public double[][] count;
-	
-	public Multinomial(int x, int y) {
-		this.x = x; this.y = y;
-		count = new double[x][y];
+public class MultinomialRegular extends MultinomialBase{
+	public MultinomialRegular(int x, int y) {
+		super(x, y);	
 	}
 	
+	@Override
 	public void initializeRandom(Random r) {
 		double small = 1e-100;
 		for(int i=0; i<y; i++) {
@@ -30,21 +26,11 @@ public class Multinomial {
 				count[j][i] = count[j][i] / sum;
 			}
 		}
+		checkDistribution();
 	}
 	
-	public double get(int x, int y) {
-		return count[x][y];
-	}
-	
-	public void set(int x, int y, double value) {
-		count[x][y] = value;
-	}
-	
-	public void addToCounts(int x, int y, double value) {
-		count[x][y] += value;
-	}
-	
-	private void smooth() {
+	@Override
+	public void smooth() {
 		//hyperparameter
 		double small = 100;
 		for(int i=0; i<y; i++) {
@@ -57,6 +43,7 @@ public class Multinomial {
 		}		
 	}
 	
+	@Override
 	public void normalize() {
 		smooth();
 		for(int i=0; i<y; i++) {
@@ -85,6 +72,7 @@ public class Multinomial {
 		checkDistribution();
 	}
 	
+	@Override
 	public void checkDistribution() {
 		double tolerance = 1e-5;
 		
@@ -106,27 +94,8 @@ public class Multinomial {
 		}
 	}
 	
-	public void cloneFrom(Multinomial source) {
-		for(int i=0; i<y; i++) {
-			for(int j=0; j<x; j++) {
-				count[j][i] = source.count[j][i];
-			}
-		}
-	}
-	
-	public boolean equalsExact(Multinomial other) {
-		boolean result = true;
-		for(int i=0; i<y; i++) {
-			for(int j=0; j<x; j++) {
-				if(count[j][i] == other.get(j,i)) {
-					result = false;
-				}
-			}
-		}
-		return result;
-	}
-	
-	public boolean equalsApprox(Multinomial other) {
+	@Override
+	public boolean equalsApprox(MultinomialBase other) {
 		double precision = 1e-200;
 		boolean result = true;
 		for(int i=0; i<y; i++) {
@@ -139,8 +108,7 @@ public class Multinomial {
 		return result;
 	}
 	
-	
-	
+	@Override
 	public void printDistribution() {
 		MyArray.printTable(count);
 	}	

@@ -37,12 +37,12 @@ public class Main {
 		trainFile = "data/train.txt.SPL";
 		testFile = "data/test.txt.SPL";
 		vocabFile = trainFile;
-		numStates = 4;
-		numIter = 100;
+		numStates = 2;
+		numIter = 500;
 		String outFile = "out/decoded/test.decoded.txt";
 		String outFileTrain = "out/decoded/train.decoded.txt";
-		//HMMType modelType = HMMType.WITH_NO_FINAL_STATE;
-		HMMType modelType = HMMType.WITH_FINAL_STATE;
+		HMMType modelType = HMMType.WITH_NO_FINAL_STATE;
+		//HMMType modelType = HMMType.WITH_FINAL_STATE;
 		
 		printParams();
 		corpus = new Corpus("\\s+", vocabThreshold);
@@ -56,7 +56,7 @@ public class Main {
 		corpus.saveVocabFile(outFolderPrefix + "/model/vocab.txt");
 		if(modelType == HMMType.WITH_NO_FINAL_STATE) {
 			System.out.println("HMM with no final state");
-			model = new HMMNoFinalState(numStates, corpus.corpusVocab.vocabSize);
+			model = new HMMNoFinalState(numStates, corpus.corpusVocab.vocabSize);			
 		} else if(modelType == HMMType.WITH_FINAL_STATE) {
 			System.out.println("HMM with final state");
 			System.out.println("NOT WORKING");

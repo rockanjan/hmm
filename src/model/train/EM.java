@@ -38,15 +38,15 @@ public class EM {
 	
 	public void eStep() {
 		if(model.hmmType == HMMType.WITH_NO_FINAL_STATE) {
-			expectedCounts = new HMMParamNoFinalState(model.nrStates, model.nrObs);
+			expectedCounts = new HMMParamNoFinalState(model);
 		} else if(model.hmmType == HMMType.WITH_FINAL_STATE) {
-			expectedCounts = new HMMParamFinalState(model.nrStates, model.nrObs);
+			expectedCounts = new HMMParamFinalState(model);
 		}
 		expectedCounts.initializeZeros();
 		for (int n=0; n<c.trainInstanceList.size(); n++) {
 			Instance instance = c.trainInstanceList.get(n);
 			instance.doInference(model);
-			instance.addToCounts(expectedCounts);
+			instance.forwardBackward.addToCounts(expectedCounts);
 			LL += instance.forwardBackward.logLikelihood;
 			instance.clearInference();
 		}
@@ -74,7 +74,6 @@ public class EM {
 			if(iterCount>0) {
 				System.out.format("LL %.2f Diff %.2f \t Iter %d \t Fixes: %d \t E-step time %s\n", LL, (LL - bestOldLL), iterCount, Stats.totalFixes, eStepTime.stop());
 			}
-			Stats.totalFixes = 0;
 			if(isConverged()) {
 				break;
 			}

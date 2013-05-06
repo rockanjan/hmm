@@ -9,6 +9,16 @@ public class LogExp{
 	//for x = LOGZERO (NaN), eexp(x) = 0, else eexp(x) = exp(x)
 	public static double exp(double x) {
 		if(Double.isNaN(x)) {
+			throw new RuntimeException("x is NaN for calculating exp(x)");
+		}
+		return Math.exp(x);		
+	}
+	
+	/*
+	 * return exp(x) value with fix for NaN
+	 */
+	public static double expFix(double x) {
+		if(Double.isNaN(x)) {
 			return 0.0;
 		}
 		return Math.exp(x);		
@@ -17,6 +27,18 @@ public class LogExp{
 	public static double log(double x) {
 		if(x == 0) {
 			return Double.NaN;
+		} else if (x < 0) {
+			throw new RuntimeException("Negative value of x for log(x)");
+		}
+		return Math.log(x);
+	}
+	
+	/*
+	 * return log value with fix for zero cases
+	 */
+	public static double logFix(double x) {
+		if(x == 0) {
+			return -Double.MAX_EXPONENT;
 		} else if (x < 0) {
 			throw new RuntimeException("Negative value of x for log(x)");
 		}

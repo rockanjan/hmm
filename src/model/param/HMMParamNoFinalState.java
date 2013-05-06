@@ -1,8 +1,10 @@
 package model.param;
 
+import model.HMMBase;
+
 public class HMMParamNoFinalState extends HMMParamBase{
-	public HMMParamNoFinalState(int nrStates, int nrObs) {
-		super(nrStates, nrObs);
+	public HMMParamNoFinalState(HMMBase model) {
+		super(model);
 		nrStatesWithFake = nrStates;
 	}
 }

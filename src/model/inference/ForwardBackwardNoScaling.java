@@ -1,6 +1,8 @@
 package model.inference;
 
 import model.HMMNoFinalState;
+import model.HMMType;
+import model.param.MultinomialBase;
 import util.MyArray;
 import corpus.Instance;
 
@@ -26,7 +28,6 @@ public class ForwardBackwardNoScaling extends ForwardBackward{
 	
 	@Override
 	public void forward() {
-		//alpha = new double[T+1][nrStates]; //+1 for fake state
 		alpha = new double[T][nrStates]; 
 		//for t=0
 		for(int i=0; i<nrStates; i++) {
@@ -36,31 +37,15 @@ public class ForwardBackwardNoScaling extends ForwardBackward{
 		}
 		likelihood = 0;
 		logLikelihood = 0;
-		//for(int t = 1; t < T+1; t++) {
 		for(int t = 1; t < T; t++) {
 			for(int j=0; j<nrStates; j++) {
 				double transSum = 0;
 				for(int i=0; i<nrStates; i++) {
 					double trans;
-					/*
-					if(t == T) {
-						trans = transition.get(nrStates, i);
-					} else {
-						trans = transition.get(j, i);
-					}
-					*/
 					trans = transition.get(j, i);
 					transSum += alpha[t-1][i] * trans;
 				}
 				double obs;
-				/*
-				if(t == T) {
-					//fake state
-					obs = 1.0;
-				} else {
-					obs = observation.get(instance.words[t], j);
-				}
-				*/
 				obs = observation.get(instance.words[t], j);
 				alpha[t][j] = transSum * obs;				
 			}
@@ -84,22 +69,8 @@ public class ForwardBackwardNoScaling extends ForwardBackward{
 				double sum = 0;
 				for(int j=0; j<nrStates; j++) {
 					double trans;
-					/*
-					if(t == T-1) { 
-						trans = transition.get(nrStates, i);
-					} else {
-						trans = transition.get(j, i);
-					}
-					*/
 					trans = transition.get(j, i);
 					double obs;
-					/*
-					if(t == T-1) {
-						obs = 1.0; //taken for the fake state(at t+1)
-					} else {
-						obs = observation.get(instance.words[t+1], j);
-					}
-					*/
 					obs = observation.get(instance.words[t+1], j);
 					sum += trans * obs * beta[t+1][j];
 				}
@@ -146,4 +117,61 @@ public class ForwardBackwardNoScaling extends ForwardBackward{
 		// TODO Auto-generated method stub
 		
 	}
+	
+	public void addToInitial(MultinomialBase initial) {
+		for(int i=0; i<nrStates; i++) {
+			initial.addToCounts(i, 0, getStatePosterior(0, i));
+		}
+	}
+	
+	public void addToObservation(MultinomialBase observation) {
+		for(int t=0; t<T; t++) {
+			for(int i=0; i<nrStates; i++) {
+				observation.addToCounts(instance.words[t], i, getStatePosterior(t, i));
+			}
+		}
+	}
+	
+	public void addToTransition(MultinomialBase transition) {
+		for(int t=0; t<T-1; t++) {
+			double normalizer = 0.0;
+			for(int i=0; i<nrStates; i++) {
+				for(int j=0; j<nrStates; j++) {
+					normalizer += getTransitionPosterior(i, j, t);
+				}
+			}
+			
+			for(int i=0; i<nrStates; i++) {
+				for(int j=0; j<nrStates; j++) {
+					transition.addToCounts(i, j, getTransitionPosterior(i, j, t) / normalizer);
+				}
+			}
+		}
+		if(model.hmmType == HMMType.WITH_FINAL_STATE) {
+			//transition to fake state
+			for(int i=0; i<nrStates; i++) {
+				//double value = getStatePosterior(T-1, i) * forwardBackward.model.param.transition.get(nrStates, i);
+				//transition.addToCounts(nrStates, i, value);
+			}
+		}
+	}
+	
+	/*
+	 * Gives the transition posterior probability
+	 */
+	public double getTransitionPosterior(int currentState, int nextState, int position) {
+		//xi in Rabiner Tutorial
+		double alphaValue = alpha[position][currentState];
+		double trans = model.param.transition.get(nextState, currentState); //transition to next given current
+		double obs = model.param.observation.get(instance.words[position+1], nextState);
+		double betaValue = beta[position+1][nextState];		
+		double value = alphaValue * trans * obs * betaValue;
+		return value;
+	}
+
+	@Override
+	public double getStatePosterior(int t, int s) {
+		return posterior[t][s];
+	}
+
 }

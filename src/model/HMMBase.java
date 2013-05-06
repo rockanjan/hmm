@@ -160,7 +160,7 @@ public abstract class HMMBase {
 	
 	public void clone(HMMNoFinalState other) {
 		if(this.param == null) {
-			this.param = new HMMParamNoFinalState(nrStates, nrObs);
+			this.param = new HMMParamNoFinalState(this);
 		}
 		this.param.cloneFrom(other.param);
 	}
