@@ -7,8 +7,11 @@ import javax.management.RuntimeErrorException;
 import util.MyArray;
 import util.Stats;
 
-public class MultinomialRegular extends MultinomialBase{
-	public MultinomialRegular(int x, int y) {
+/*
+ * Stores all probabilities in log
+ */
+public class MultinomialLog extends MultinomialBase{
+	public MultinomialLog(int x, int y) {
 		super(x, y);	
 	}
 	
@@ -23,7 +26,7 @@ public class MultinomialRegular extends MultinomialBase{
 			}
 			//normalize
 			for(int j=0; j<x; j++) {
-				count[j][i] = count[j][i] / sum;
+				count[j][i] = Math.log(count[j][i]) - Math.log(sum);
 			}
 		}
 		checkDistribution();
@@ -45,6 +48,8 @@ public class MultinomialRegular extends MultinomialBase{
 	
 	@Override
 	public void normalize() {
+		System.out.println("TODO");
+		System.exit(-1);
 		smooth();
 		for(int i=0; i<y; i++) {
 			double sum = 0;
@@ -79,7 +84,7 @@ public class MultinomialRegular extends MultinomialBase{
 		for(int i=0; i<y; i++) {
 			double sum = 0;
 			for(int j=0; j<x; j++) {
-				sum += count[j][i];
+				sum += Math.exp(count[j][i]);
 			}
 			if(Double.isNaN(sum)) {
 				throw new RuntimeException("Distribution sums to NaN");

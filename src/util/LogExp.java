@@ -61,4 +61,29 @@ public class LogExp{
 			return b + Math.log1p(Math.exp(a - b));
 		}
 	}
+	
+	public static double logsumexp(double[] values) {
+		double result = 0.0;
+		double MAX = -Double.MAX_VALUE;
+		for(int i=0; i<values.length; i++) {
+			if(values[i] > MAX) {
+				MAX = values[i];
+			}
+		}
+		double expsum = 0.0;
+		for(int i=0; i<values.length; i++) {
+			expsum += Math.exp(values[i] - MAX);
+		}
+		result = MAX + Math.log(expsum); 
+		return result;
+	}
+	
+	public static void main(String[] args) {
+		double a = -7;
+		double b = -20;
+		System.out.println(a + Math.log(1 + exp(b - a)));
+		System.out.println(logsumexp(a, b));
+		double[] values = {a, b};
+		System.out.println(logsumexp(values));
+	}
  }

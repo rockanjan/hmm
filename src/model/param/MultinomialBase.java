@@ -49,10 +49,22 @@ public abstract class MultinomialBase {
 		return result;
 	}
 	
+	public boolean equalsApprox(MultinomialBase other) {
+		double precision = 1e-200;
+		boolean result = true;
+		for(int i=0; i<y; i++) {
+			for(int j=0; j<x; j++) {
+				if(Math.abs(count[j][i] - other.get(j,i)) > precision) {
+					result = false;
+				}
+			}
+		}
+		return result;
+	}
+	
 	public abstract void initializeRandom(Random r);
 	public abstract void smooth();
 	public abstract void normalize();
 	public abstract void checkDistribution();
-	public abstract boolean equalsApprox(MultinomialBase other);
 	public abstract void printDistribution();	
 }
