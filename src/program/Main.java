@@ -35,15 +35,16 @@ public class Main {
 	/** user parameters end **/
 	public static void main(String[] args) throws IOException {
 		outFolderPrefix = "out/";
-		trainFile = "data/train.txt.small.SPL";
+		//trainFile = "data/train.txt.small.SPL";
+		trainFile = "data/train.txt.SPL";
 		testFile = "data/test.txt.SPL";
 		vocabFile = trainFile;
-		numStates = 2;
+		numStates = 20;
 		numIter = 200;
 		String outFile = "out/decoded/test.decoded.txt";
 		String outFileTrain = "out/decoded/train.decoded.txt";
-		//HMMType modelType = HMMType.LOG_SCALE;
-		HMMType modelType = HMMType.WITH_NO_FINAL_STATE;
+		HMMType modelType = HMMType.LOG_SCALE;
+		//HMMType modelType = HMMType.WITH_NO_FINAL_STATE;
 		//HMMType modelType = HMMType.WITH_FINAL_STATE;
 		
 		printParams();

@@ -143,23 +143,24 @@ public class ForwardBackwardLog extends ForwardBackward{
 	//works in normal scale (not log scale)
 	public void addToTransition(MultinomialBase transition) {
 		for(int t=0; t<T-1; t++) {
+			/*
 			double norm = 0.0;
 			for(int i=0; i<nrStates; i++) {
 				for(int j=0; j<nrStates; j++) {
 					norm += Math.exp(getTransitionPosterior(i, j, t));
 				}
 			}
-			
+			*/
 			for(int i=0; i<nrStates; i++) {
 				for(int j=0; j<nrStates; j++) {
-					transition.addToCounts(i, j, Math.exp(getTransitionPosterior(i, j, t)) / norm);
+					transition.addToCounts(i, j, Math.exp(getTransitionPosterior(i, j, t)));
 				}
 			}
 		}
 	}
 	
 	/*
-	 * Gives the log of transition posterior probability (not normalized)
+	 * Gives the log of transition posterior probability (normalized by logLikelihood)
 	 */
 	public double getTransitionPosterior(int currentState, int nextState, int position) {
 		//xi in Rabiner Tutorial
@@ -167,7 +168,7 @@ public class ForwardBackwardLog extends ForwardBackward{
 		double trans = model.param.transition.get(nextState, currentState); //transition to next given current
 		double obs = model.param.observation.get(instance.words[position+1], nextState);
 		double betaValue = beta[position+1][nextState];		
-		double value = alphaValue + trans + obs + betaValue;		
+		double value = alphaValue + trans + obs + betaValue - logLikelihood;		
 		return value;
 	}
 	
