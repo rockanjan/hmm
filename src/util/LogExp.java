@@ -19,6 +19,7 @@ public class LogExp{
 	 */
 	public static double expFix(double x) {
 		if(Double.isNaN(x)) {
+			Stats.totalFixes++;
 			return 0.0;
 		}
 		return Math.exp(x);		
@@ -38,6 +39,7 @@ public class LogExp{
 	 */
 	public static double logFix(double x) {
 		if(x == 0) {
+			Stats.totalFixes++;
 			return -Double.MAX_EXPONENT;
 		} else if (x < 0) {
 			throw new RuntimeException("Negative value of x for log(x)");

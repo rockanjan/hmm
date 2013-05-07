@@ -4,6 +4,7 @@ import java.util.Random;
 
 import javax.management.RuntimeErrorException;
 
+import util.LogExp;
 import util.MyArray;
 import util.Stats;
 
@@ -17,6 +18,7 @@ public class MultinomialLog extends MultinomialBase{
 	
 	@Override
 	public void initializeRandom(Random r) {
+		System.out.println("initializing multinomial log");
 		double small = 1e-100;
 		for(int i=0; i<y; i++) {
 			double sum = 0;
@@ -46,10 +48,9 @@ public class MultinomialLog extends MultinomialBase{
 		}		
 	}
 	
+	//when reached here, the counts are normal (no logs)
 	@Override
 	public void normalize() {
-		System.out.println("TODO");
-		System.exit(-1);
 		smooth();
 		for(int i=0; i<y; i++) {
 			double sum = 0;
@@ -70,6 +71,11 @@ public class MultinomialLog extends MultinomialBase{
 				}
 				if(count[j][i] == 0) {
 					//System.err.println("Prob distribution zero after normalization");
+					Stats.totalFixes++;
+					//fix
+					count[j][i] = -Double.MAX_EXPONENT;
+				} else {
+					count[j][i] = Math.log(count[j][i]);
 				}
 			}
 		}
@@ -86,6 +92,7 @@ public class MultinomialLog extends MultinomialBase{
 			for(int j=0; j<x; j++) {
 				sum += Math.exp(count[j][i]);
 			}
+			
 			if(Double.isNaN(sum)) {
 				throw new RuntimeException("Distribution sums to NaN");
 			}
@@ -101,6 +108,13 @@ public class MultinomialLog extends MultinomialBase{
 	
 	@Override
 	public void printDistribution() {
-		MyArray.printTable(count);
-	}	
+		MyArray.printExpTable(count);
+	}
+	
+	
+	public static void main(String[] args) {
+		MultinomialLog ml = new MultinomialLog(10, 20);
+		ml.initializeRandom(new Random());
+		ml.checkDistribution();
+	}
 }

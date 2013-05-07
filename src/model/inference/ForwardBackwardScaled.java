@@ -39,7 +39,6 @@ public class ForwardBackwardScaled extends ForwardBackward{
 			double pi = initial.get(i, 0);
 			double obs = observation.get( instance.words[0], i);
 			alpha[0][i] = pi * obs;
-			
 			if(alpha[0][i] == 0) {
 				Stats.totalFixes++;
 				alpha[0][i] = Double.MIN_VALUE; //fix
@@ -96,7 +95,7 @@ public class ForwardBackwardScaled extends ForwardBackward{
 			}
 		}
 		//MyArray.printTable(alpha);
-		//System.out.println("LogLikelihood: " + logLikelihood);
+		//System.out.println(logLikelihood);
 	}
 	
 	@Override

@@ -7,6 +7,8 @@ import util.SmoothWord;
 import model.HMMBase;
 import model.HMMType;
 import model.inference.ForwardBackward;
+import model.inference.ForwardBackwardLog;
+import model.inference.ForwardBackwardNoScaling;
 import model.inference.ForwardBackwardScaled;
 import model.param.HMMParamBase;
 import model.param.MultinomialRegular;
@@ -28,7 +30,12 @@ public class Instance {
 	
 	public void doInference(HMMBase model) {
 		//forwardBackward = new ForwardBackwardNoScaling(model, this);
-		forwardBackward = new ForwardBackwardScaled(model, this);
+		if(model.hmmType == HMMType.LOG_SCALE) {
+			forwardBackward = new ForwardBackwardLog(model, this);
+		} else {
+			forwardBackward = new ForwardBackwardScaled(model, this);
+			//forwardBackward = new ForwardBackwardNoScaling(model, this);
+		}
 		nrStates = forwardBackward.model.nrStates;
 		forwardBackward.doInference();
 	}

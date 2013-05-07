@@ -6,7 +6,9 @@ import model.HMMType;
 import model.param.HMMParamBase;
 import model.param.HMMParamFinalState;
 import model.param.HMMParamNoFinalState;
+import model.param.HMMParamNoFinalStateLog;
 
+import util.MyArray;
 import util.Stats;
 import util.Timing;
 import corpus.Corpus;
@@ -41,6 +43,8 @@ public class EM {
 			expectedCounts = new HMMParamNoFinalState(model);
 		} else if(model.hmmType == HMMType.WITH_FINAL_STATE) {
 			expectedCounts = new HMMParamFinalState(model);
+		} else if(model.hmmType == HMMType.LOG_SCALE) {
+			expectedCounts = new HMMParamNoFinalStateLog(model);
 		}
 		expectedCounts.initializeZeros();
 		for (int n=0; n<c.trainInstanceList.size(); n++) {
@@ -53,7 +57,7 @@ public class EM {
 	}
 	
 	public void mStep() {
-		//expectedCounts.transition.printDistribution();
+		//MyArray.printTable(expectedCounts.transition.count);
 		model.updateFromCounts(expectedCounts);
 		//model.param.transition.printDistribution();
 		//model.param.initial.printDistribution();

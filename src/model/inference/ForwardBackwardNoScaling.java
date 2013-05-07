@@ -1,5 +1,6 @@
 package model.inference;
 
+import model.HMMBase;
 import model.HMMNoFinalState;
 import model.HMMType;
 import model.param.MultinomialBase;
@@ -8,7 +9,7 @@ import corpus.Instance;
 
 public class ForwardBackwardNoScaling extends ForwardBackward{
 	public double likelihood;
-	public ForwardBackwardNoScaling(HMMNoFinalState model, Instance instance) {
+	public ForwardBackwardNoScaling(HMMBase model, Instance instance) {
 		super();
 		this.model = model;
 		this.instance = instance;
@@ -53,8 +54,7 @@ public class ForwardBackwardNoScaling extends ForwardBackward{
 		for(int i=0; i<nrStates; i++) {
 			likelihood += alpha[T-1][i];			
 		}
-		logLikelihood = Math.log(likelihood);
-		//MyArray.printTable(alpha);		
+		logLikelihood = Math.log(likelihood);		
 	}
 	
 	public void backward() {
@@ -77,7 +77,7 @@ public class ForwardBackwardNoScaling extends ForwardBackward{
 				beta[t][i] = sum;
 			}
 		}
-		//MyArray.printTable(beta);
+		//MyArray.printTable(beta);		
 	}
 	
 	@Override

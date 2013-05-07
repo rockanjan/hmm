@@ -25,7 +25,9 @@ public abstract class HMMParamBase {
 	
 	public void initializeZeros() {
 		if(model.hmmType == HMMType.LOG_SCALE) {
-			
+			initial = new MultinomialLog(nrStates, 1);
+			transition = new MultinomialLog(nrStatesWithFake, nrStates);
+			observation = new MultinomialLog(nrObs, nrStates);
 		} else {
 			initial = new MultinomialRegular(nrStates, 1);
 			transition = new MultinomialRegular(nrStatesWithFake, nrStates);
@@ -35,7 +37,9 @@ public abstract class HMMParamBase {
 	
 	public void initialize(Random r) {
 		if(model.hmmType == HMMType.LOG_SCALE) {
-			System.out.println("Log Scale Implementation");
+			initial = new MultinomialLog(nrStates, 1);
+			transition = new MultinomialLog(nrStatesWithFake, nrStates);
+			observation = new MultinomialLog(nrObs, nrStates);
 		} else {
 			initial = new MultinomialRegular(nrStates, 1);
 			transition = new MultinomialRegular(nrStatesWithFake, nrStates);

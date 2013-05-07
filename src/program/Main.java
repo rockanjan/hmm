@@ -8,6 +8,7 @@ import java.util.Random;
 import model.HMMBase;
 import model.HMMFinalState;
 import model.HMMNoFinalState;
+import model.HMMNoFinalStateLog;
 import model.HMMType;
 import model.inference.Decoder;
 import model.train.EM;
@@ -37,11 +38,12 @@ public class Main {
 		trainFile = "data/train.txt.SPL";
 		testFile = "data/test.txt.SPL";
 		vocabFile = trainFile;
-		numStates = 2;
-		numIter = 500;
+		numStates = 40;
+		numIter = 200;
 		String outFile = "out/decoded/test.decoded.txt";
 		String outFileTrain = "out/decoded/train.decoded.txt";
-		HMMType modelType = HMMType.WITH_NO_FINAL_STATE;
+		HMMType modelType = HMMType.LOG_SCALE;
+		//HMMType modelType = HMMType.WITH_NO_FINAL_STATE;
 		//HMMType modelType = HMMType.WITH_FINAL_STATE;
 		
 		printParams();
@@ -62,6 +64,9 @@ public class Main {
 			System.out.println("NOT WORKING");
 			System.exit(-1);
 			model = new HMMFinalState(numStates, corpus.corpusVocab.vocabSize);
+		} else if(modelType == HMMType.LOG_SCALE) {
+			System.out.println("HMM Log scale");
+			model = new HMMNoFinalStateLog(numStates, corpus.corpusVocab.vocabSize);
 		}
 		Random r = new Random(seed);
 		model.initializeRandom(r);
