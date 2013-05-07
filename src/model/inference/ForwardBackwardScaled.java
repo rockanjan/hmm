@@ -137,7 +137,7 @@ public class ForwardBackwardScaled extends ForwardBackward{
 				posterior[t][i] = alpha[t][i] * beta[t][i] / denom;
 			}
 		}
-		//MyArray.printTable(posterior);
+		//MyArray.printTable(posterior, "posterior scaled");
 		checkStatePosterior();
 	}
 	

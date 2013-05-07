@@ -41,12 +41,13 @@ public class ForwardBackwardLog extends ForwardBackward{
 			alpha[0][i] = pi + obs; //these prob are in logscale	
 						
 		}
+		
 		//induction
 		for(int t = 1; t < T; t++) {
 			for(int j=0; j<nrStates; j++) {
 				double[] expParams = new double[nrStates];
 				for(int i=0; i<nrStates; i++) {
-					expParams[i] = alpha[t-1][i] + model.param.transition.get(i, j); 
+					expParams[i] = alpha[t-1][i] + model.param.transition.get(j, i); 
 				}
 				double obs;
 				obs = observation.get(instance.words[t], j);
@@ -54,6 +55,7 @@ public class ForwardBackwardLog extends ForwardBackward{
 			}			
 		}
 		logLikelihood = LogExp.logsumexp(alpha[T-1]);
+		//MyArray.printExpTable(alpha, "log alpha");
 		//System.out.println(logLikelihood);
 	}
 	
@@ -76,7 +78,7 @@ public class ForwardBackwardLog extends ForwardBackward{
 				beta[t][i] = LogExp.logsumexp(expParams);
 			}
 		}
-		//MyArray.printExpTable(beta);
+		//MyArray.printExpTable(beta, "log beta");
 	}
 	
 	//regular probablity (no log)
@@ -95,8 +97,8 @@ public class ForwardBackwardLog extends ForwardBackward{
 				posterior[t][i] = Math.exp(posterior[t][i]);
 			}
 		}
-		//MyArray.printExpTable(posterior);
-		checkStatePosterior();
+		//MyArray.printTable(posterior, "log posterior");
+		checkStatePosterior();		
 	}
 	
 	public void checkStatePosterior(){

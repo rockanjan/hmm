@@ -54,6 +54,7 @@ public class ForwardBackwardNoScaling extends ForwardBackward{
 		for(int i=0; i<nrStates; i++) {
 			likelihood += alpha[T-1][i];			
 		}
+		//MyArray.printTable(alpha, "noscaling alpha");
 		logLikelihood = Math.log(likelihood);		
 	}
 	
@@ -77,7 +78,7 @@ public class ForwardBackwardNoScaling extends ForwardBackward{
 				beta[t][i] = sum;
 			}
 		}
-		//MyArray.printTable(beta);		
+		//MyArray.printTable(beta, "noscaling beta");		
 	}
 	
 	@Override
@@ -88,8 +89,9 @@ public class ForwardBackwardNoScaling extends ForwardBackward{
 				posterior[t][i] = alpha[t][i] * beta[t][i] / likelihood;
 			}
 		}
-		//MyArray.printTable(posterior);
+		//MyArray.printTable(posterior, "noscaling posterior");
 		checkStatePosterior();
+		//System.exit(-1);
 	}
 	
 	@Override

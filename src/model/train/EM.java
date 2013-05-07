@@ -57,10 +57,13 @@ public class EM {
 	}
 	
 	public void mStep() {
-		//MyArray.printTable(expectedCounts.transition.count);
+//		MyArray.printTable(expectedCounts.initial.count);
+//		MyArray.printTable(expectedCounts.transition.count);
+//		MyArray.printTable(expectedCounts.observation.count);
 		model.updateFromCounts(expectedCounts);
-		//model.param.transition.printDistribution();
-		//model.param.initial.printDistribution();
+//		model.param.initial.printDistribution();
+//		model.param.transition.printDistribution();
+//		model.param.observation.printDistribution();
 	}
 
 	public void start() {
