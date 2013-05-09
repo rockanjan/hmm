@@ -31,11 +31,12 @@ public class Main {
 	static int vocabThreshold = 1; //only above this included
 	static HMMBase model;
 	static Corpus corpus;
+	static HMMType modelType;
 	
 	/** user parameters end **/
 	public static void main(String[] args) throws IOException {
+		//defaults
 		outFolderPrefix = "out/";
-		//trainFile = "data/train.txt.small.SPL";
 		trainFile = "data/train.txt.SPL";
 		testFile = "data/test.txt.SPL";
 		vocabFile = trainFile;
@@ -43,9 +44,23 @@ public class Main {
 		numIter = 200;
 		String outFile = "out/decoded/test.decoded.txt";
 		String outFileTrain = "out/decoded/train.decoded.txt";
-		HMMType modelType = HMMType.LOG_SCALE;
-		//HMMType modelType = HMMType.WITH_NO_FINAL_STATE;
-		//HMMType modelType = HMMType.WITH_FINAL_STATE;
+		modelType = HMMType.WITH_NO_FINAL_STATE;
+		
+		if(args.length > 0) {
+			try{
+				numStates = Integer.parseInt(args[0]);
+				numIter = Integer.parseInt(args[1]);
+				trainFile = args[2];
+				testFile = args[3];
+				vocabFile = args[4];
+			} catch(Exception e) {
+				System.out.println("<program> numStates numIter trainFile testFile vocabFile");
+				System.exit(-1);
+			}
+			
+		}
+		//modelType = HMMType.LOG_SCALE;
+		//modelType = HMMType.WITH_FINAL_STATE;
 		
 		printParams();
 		corpus = new Corpus("\\s+", vocabThreshold);
@@ -86,7 +101,7 @@ public class Main {
 		*/
 		test(model, corpus.testInstanceList, outFile);		
 		test(model, corpus.trainInstanceList, outFileTrain);
-		testPosteriorDistribution(model, corpus.testInstanceList, outFile + ".posterior_distribution");
+		//testPosteriorDistribution(model, corpus.testInstanceList, outFile + ".posterior_distribution");
 	}
 	
 	public static void testPosteriorDistribution(HMMBase model, InstanceList instanceList, String outFile) {
