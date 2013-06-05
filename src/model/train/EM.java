@@ -32,6 +32,9 @@ public class EM {
 	
 	int lowerCount = 0; //number of times LL could not increase from previous best
 	int iterCount = 0;
+	
+	public static int sampleSentenceSize = 10000;
+	
 	public EM(int numIter, Corpus c, HMMBase model) {
 		this.numIter = numIter;
 		this.c = c;
@@ -39,6 +42,7 @@ public class EM {
 	}
 	
 	public void eStep() {
+		c.generateRandomTrainingSample(sampleSentenceSize);
 		if(model.hmmType == HMMType.WITH_NO_FINAL_STATE) {
 			expectedCounts = new HMMParamNoFinalState(model);
 		} else if(model.hmmType == HMMType.WITH_FINAL_STATE) {
@@ -47,8 +51,8 @@ public class EM {
 			expectedCounts = new HMMParamNoFinalStateLog(model);
 		}
 		expectedCounts.initializeZeros();
-		for (int n=0; n<c.trainInstanceList.size(); n++) {
-			Instance instance = c.trainInstanceList.get(n);
+		for (int n=0; n<c.randomTrainingSampleInstanceList.size(); n++) {
+			Instance instance = c.randomTrainingSampleInstanceList.get(n);
 			instance.doInference(model);
 			instance.forwardBackward.addToCounts(expectedCounts);
 			LL += instance.forwardBackward.logLikelihood;
@@ -78,6 +82,8 @@ public class EM {
 			eStepTime.start();
 			Stats.totalFixes = 0;
 			eStep();
+			//add more and more examples per iteration
+			sampleSentenceSize += 1000;
 			if(iterCount>0) {
 				System.out.format("LL %.2f Diff %.2f \t Iter %d \t Fixes: %d \t E-step time %s\n", LL, (LL - bestOldLL), iterCount, Stats.totalFixes, eStepTime.stop());
 			}

@@ -6,14 +6,18 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class Corpus {
 	public String delimiter;
 	public InstanceList trainInstanceList = new InstanceList();
 	// testInstanceList can be empty
 	public InstanceList testInstanceList;
+	public InstanceList randomTrainingSampleInstanceList;
+	Random random = new Random(37);
 
 	public Vocabulary corpusVocab;
 
@@ -88,6 +92,23 @@ public class Corpus {
 		corpusVocab = new Vocabulary();
 		corpusVocab.readVocabFromDictionary(filename);
 	}
+	
+	public void generateRandomTrainingSample(int size) {
+		randomTrainingSampleInstanceList = new InstanceList();
+		if(trainInstanceList.size() <= size) {
+			randomTrainingSampleInstanceList.addAll(trainInstanceList);
+		} else {
+			ArrayList<Integer> randomInts = new ArrayList<Integer>();			
+			for(int i=0; i<trainInstanceList.size(); i++) {
+				randomInts.add(i);
+			}
+			Collections.shuffle(randomInts,random);
+			for(int i=0; i<size; i++) {
+				Instance instance = trainInstanceList.get(randomInts.get(i));
+				randomTrainingSampleInstanceList.add(instance);				
+			}			
+		}
+	}	
 
 	public void saveVocabFile(String filename) {
 		PrintWriter dictionaryWriter;

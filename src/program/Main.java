@@ -37,14 +37,14 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		//defaults
 		outFolderPrefix = "out/";
-		trainFile = "data/train.txt.SPL";
-		testFile = "data/test.txt.SPL";
+		trainFile = "/home/anjan/workspace/HMM/data/test.txt.SPL";
+		testFile = "/home/anjan/workspace/HMM/data/test.txt.SPL";
 		vocabFile = trainFile;
-		numStates = 20;
+		numStates = 10;
 		numIter = 200;
 		String outFile = "out/decoded/test.decoded.txt";
 		String outFileTrain = "out/decoded/train.decoded.txt";
-		modelType = HMMType.WITH_NO_FINAL_STATE;
+		modelType = HMMType.LOG_SCALE;
 		
 		if(args.length > 0) {
 			try{
@@ -65,8 +65,9 @@ public class Main {
 		printParams();
 		corpus = new Corpus("\\s+", vocabThreshold);
 		
-		//TRAIN
 		
+		
+		//TRAIN
 		corpus.readVocab(vocabFile);
 		corpus.readTrain(trainFile);
 		corpus.readTest(testFile);
@@ -84,23 +85,25 @@ public class Main {
 			System.out.println("HMM Log scale");
 			model = new HMMNoFinalStateLog(numStates, corpus.corpusVocab.vocabSize);
 		}
+		
 		Random r = new Random(seed);
 		model.initializeRandom(r);
 		EM em = new EM(numIter, corpus, model);
 		//start training with EM
 		em.start();
+		model.saveModel();
 		
 		
 		/*
 		//TEST
 		corpus.readVocabFromDictionary("out/model/vocab.txt");
-		corpus.readTrain(trainFile);
 		corpus.readTest(testFile);
-		model = new HMMNoFinalState();
-		model.loadModel("/home/anjan/workspace/HMM/out/model/model_iter_53_states_80.txt");
+		model = new HMMNoFinalStateLog(numStates, corpus.corpusVocab.vocabSize);
+		model.loadModel("/home/anjan/workspace/HMM/out/model/model_final_states_10.txt");
 		*/
+		
 		test(model, corpus.testInstanceList, outFile);		
-		test(model, corpus.trainInstanceList, outFileTrain);
+		//test(model, corpus.trainInstanceList, outFileTrain);
 		//testPosteriorDistribution(model, corpus.testInstanceList, outFile + ".posterior_distribution");
 	}
 	

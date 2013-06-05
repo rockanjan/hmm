@@ -17,7 +17,7 @@ public class Vocabulary {
 	public int vocabThreshold = 1;
 	//index zero reserved for *unk* (low freq features)
 	
-	private int index = 1;
+	private int index = 0;
 	public int vocabSize = -1;
 	public String UNKNOWN = "*unk*";
 	public Map<String, Integer> wordToIndex = new HashMap<String, Integer>();
@@ -79,7 +79,7 @@ public class Vocabulary {
 		ArrayList<String> indexToWordNew = new ArrayList<String>();
 		Map<Integer, Integer> indexToFrequencyNew = new HashMap<Integer, Integer>();
 		wordToIndexNew.put(UNKNOWN, 0);
-		indexToFrequencyNew.put(0, -1); //TODO: decide if this matters
+		indexToFrequencyNew.put(0, indexToFrequency.get(0)); //keep the UNK no matter what
 		indexToWordNew.add(UNKNOWN);
 		int featureIndex = 1;
 		for(int i=1; i<indexToWord.size(); i++) {
