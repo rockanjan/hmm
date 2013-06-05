@@ -40,8 +40,8 @@ public class Main {
 		trainFile = "/home/anjan/workspace/HMM/data/test.txt.SPL";
 		testFile = "/home/anjan/workspace/HMM/data/test.txt.SPL";
 		vocabFile = trainFile;
-		numStates = 10;
-		numIter = 200;
+		numStates = 100;
+		numIter = 500;
 		String outFile = "out/decoded/test.decoded.txt";
 		String outFileTrain = "out/decoded/train.decoded.txt";
 		modelType = HMMType.LOG_SCALE;

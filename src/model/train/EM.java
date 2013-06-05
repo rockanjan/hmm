@@ -100,6 +100,9 @@ public class EM {
 		
 		double decreaseRatio = (LL - bestOldLL)/Math.abs(bestOldLL);
 		//System.out.println("Decrease Ratio: %.5f " + decreaseRatio);
+		if(iterCount % 50 == 0) {
+			model.saveModel(iterCount);
+		}
 		if(precision > decreaseRatio && decreaseRatio > 0) {
 			System.out.println("Converged. Saving the final model");
 			model.saveModel(iterCount);
