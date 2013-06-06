@@ -37,7 +37,7 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		//defaults
 		outFolderPrefix = "out/";
-		trainFile = "/home/anjan/workspace/HMM/data/test.txt.SPL";
+		trainFile = "/home/anjan/workspace/HMM/data/train.txt.small.SPL";
 		testFile = "/home/anjan/workspace/HMM/data/test.txt.SPL";
 		vocabFile = trainFile;
 		numStates = 100;

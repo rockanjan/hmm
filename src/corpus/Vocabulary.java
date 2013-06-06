@@ -11,7 +11,7 @@ import java.util.Map;
 import util.SmoothWord;
 
 public class Vocabulary {
-	boolean debug = false;
+	boolean debug = true;
 	boolean smooth = true;
 	boolean lower = true;
 	public int vocabThreshold = 1;
@@ -47,6 +47,7 @@ public class Vocabulary {
 		wordToIndex.put(UNKNOWN, 0);
 		indexToFrequency.put(0, 0);
 		indexToWord.add(UNKNOWN);
+		index = 1; //indexToFrequency should start new index from 1
 		while( (line = br.readLine()) != null) {
 			line = line.trim();
 			if(! line.isEmpty()) {
@@ -65,6 +66,9 @@ public class Vocabulary {
 		}
 		vocabSize = wordToIndex.size();
 		System.out.println("Vocab Size before reduction including UNKNOWN : " + vocabSize);
+		if(debug) {
+			c.debug();
+		}
 		reduceVocab(c);
 		System.out.println("Vocab Size after reduction including UNKNOWN : " + vocabSize);
 		if(debug) {

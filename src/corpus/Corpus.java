@@ -134,7 +134,7 @@ public class Corpus {
 		sb.append("vocab size : " + corpusVocab.vocabSize);
 		sb.append("\nvocab frequency: \n");
 		for (int i = 0; i < corpusVocab.vocabSize; i++) {
-			sb.append("\t" + corpusVocab.indexToWord.get(i) + " --> "
+			sb.append(i + "\t" + corpusVocab.indexToWord.get(i) + " --> "
 					+ corpusVocab.indexToFrequency.get(i));
 			sb.append("\n");
 		}
