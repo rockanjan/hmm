@@ -11,7 +11,7 @@ import java.util.Map;
 import util.SmoothWord;
 
 public class Vocabulary {
-	boolean debug = true;
+	boolean debug = false;
 	boolean smooth = true;
 	boolean lower = true;
 	public int vocabThreshold = 1;

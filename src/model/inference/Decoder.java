@@ -1,5 +1,7 @@
 package model.inference;
 
+import java.util.Arrays;
+
 import model.HMMBase;
 import model.HMMNoFinalState;
 import model.HMMType;
@@ -76,6 +78,7 @@ public class Decoder {
 	
 	private int[] viterbiLog(Instance instance) {
 		int[] decoded = new int[instance.T];
+		Arrays.fill(decoded, -1);
 		instance.doInference(model);
 		
 		double[][] probLattice = new double[instance.T][model.nrStates];
@@ -97,10 +100,6 @@ public class Decoder {
 				maxIndex = -1;
 				for(int i=0; i<model.nrStates; i++) {
 					double value = probLattice[t-1][i] + model.param.transition.get(j, i) + obs;
-					if(model.hmmType == HMMType.WITH_FINAL_STATE && t == instance.T-1) {
-						//also include the transition to the final state
-						value += model.param.transition.get(model.nrStates, j);
-					}
 					if(value > maxValue) {
 						maxValue = value;
 						maxIndex = i;

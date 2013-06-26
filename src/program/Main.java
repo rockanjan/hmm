@@ -21,11 +21,12 @@ public class Main {
 	/** user parameters **/
 	static String delimiter = "\\+";
 	static int numIter;
-	static long seed = 37;
+	static long seed = 4321;
 	
 	static String trainFile;
 	static String vocabFile;
 	static String testFile;
+	static String devFile;
 	static String outFolderPrefix;
 	static int numStates; 	
 	static int vocabThreshold = 1; //only above this included
@@ -37,14 +38,17 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		//defaults
 		outFolderPrefix = "out/";
-		trainFile = "/home/anjan/workspace/HMM/data/train.txt.small.SPL";
-		testFile = "/home/anjan/workspace/HMM/data/test.txt.SPL";
+		trainFile = "data/combined.txt.SPL";
+		devFile = "data/srl.txt";
+		testFile = "data/test.txt.SPL";
 		vocabFile = trainFile;
-		numStates = 100;
-		numIter = 500;
-		String outFile = "out/decoded/test.decoded.txt";
-		String outFileTrain = "out/decoded/train.decoded.txt";
+		numStates = 10;
+		numIter = 100;
+		String outFileTrain = "out/decoded/combined.decoded.txt";
+		String outFileDev = "out/decoded/srl.decoded.txt";
+		String outFileTest = "out/decoded/test.decoded.txt";
 		modelType = HMMType.LOG_SCALE;
+		//modelType = HMMType.WITH_NO_FINAL_STATE;
 		
 		if(args.length > 0) {
 			try{
@@ -71,6 +75,7 @@ public class Main {
 		corpus.readVocab(vocabFile);
 		corpus.readTrain(trainFile);
 		corpus.readTest(testFile);
+		corpus.readDev(devFile);
 		//save vocab file
 		corpus.saveVocabFile(outFolderPrefix + "/model/vocab.txt");
 		if(modelType == HMMType.WITH_NO_FINAL_STATE) {
@@ -102,8 +107,15 @@ public class Main {
 		model.loadModel("/home/anjan/workspace/HMM/out/model/model_final_states_10.txt");
 		*/
 		
-		test(model, corpus.testInstanceList, outFile);		
-		//test(model, corpus.trainInstanceList, outFileTrain);
+		if(corpus.testInstanceList != null) {
+			System.out.println("Test data LL = " + corpus.testInstanceList.getLL(model));
+			test(model, corpus.testInstanceList, outFileTest);
+		}
+		if(corpus.devInstanceList != null) {
+			System.out.println("Dev data LL = " + corpus.devInstanceList.getLL(model));
+			test(model, corpus.devInstanceList, outFileDev);
+		}
+		test(model, corpus.trainInstanceList, outFileTrain);
 		//testPosteriorDistribution(model, corpus.testInstanceList, outFile + ".posterior_distribution");
 	}
 	
@@ -164,6 +176,7 @@ public class Main {
 		sb.append("Train file : " + trainFile);
 		sb.append("\nVocab file : " + vocabFile);
 		sb.append("\nTest file : " + testFile);
+		sb.append("\nDev file : " + devFile);
 		sb.append("\noutFolderPrefix : " + outFolderPrefix);
 		sb.append("\nIterations : " + numIter);
 		sb.append("\nNumStates : " + numStates);

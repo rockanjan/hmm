@@ -16,8 +16,9 @@ public class Corpus {
 	public InstanceList trainInstanceList = new InstanceList();
 	// testInstanceList can be empty
 	public InstanceList testInstanceList;
+	public InstanceList devInstanceList;
 	public InstanceList randomTrainingSampleInstanceList;
-	Random random = new Random(37);
+	Random random = new Random(4321);
 
 	public Vocabulary corpusVocab;
 
@@ -28,6 +29,32 @@ public class Corpus {
 	public Corpus(String delimiter, int vocabThreshold) {
 		this.delimiter = delimiter;
 		this.vocabThreshold = vocabThreshold;
+	}
+	
+	public void readDev(String inFile) throws IOException {
+		BufferedReader br = new BufferedReader(new FileReader(inFile));
+		String line = null;
+		int totalWords = 0;
+		int totalUnknown = 0;
+		devInstanceList = new InstanceList();
+		while ((line = br.readLine()) != null) {
+			line = line.trim();
+			if (!line.isEmpty()) {
+				Instance instance = new Instance(this, line);
+				totalUnknown += instance.unknownCount;
+				if (instance.words.length != 0) {
+					devInstanceList.add(instance);
+					totalWords += instance.words.length;
+				} else {
+					System.out.println("Could not read from dev file, line = "
+							+ line);
+				}
+			}
+		}
+		System.out.println("Dev Instances: " + devInstanceList.size());
+		System.out.println("Dev token count: " + totalWords);
+		System.out.println("Dev unknown count : " + totalUnknown);
+		br.close();
 	}
 
 	public void readTest(String inFile) throws IOException {

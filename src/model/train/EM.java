@@ -33,7 +33,7 @@ public class EM {
 	int lowerCount = 0; //number of times LL could not increase from previous best
 	int iterCount = 0;
 	
-	public static int sampleSentenceSize = 10000;
+	public static int sampleSentenceSize = 50000;
 	
 	public EM(int numIter, Corpus c, HMMBase model) {
 		this.numIter = numIter;
@@ -91,7 +91,8 @@ public class EM {
 				break;
 			}
 			//m-step
-			mStep();						
+			mStep();
+			System.out.println("Dev data LL : " + c.devInstanceList.getLL(model));
 		}
 		System.out.println("Total EM Time : " + totalEMTime.stop());
 	}
