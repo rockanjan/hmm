@@ -145,7 +145,7 @@ public class ForwardBackwardNoScaling extends ForwardBackward{
 			
 			for(int i=0; i<nrStates; i++) {
 				for(int j=0; j<nrStates; j++) {
-					transition.addToCounts(i, j, getTransitionPosterior(i, j, t) / normalizer);
+					transition.addToCounts(j, i, getTransitionPosterior(i, j, t) / normalizer);
 				}
 			}
 		}

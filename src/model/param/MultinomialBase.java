@@ -65,6 +65,7 @@ public abstract class MultinomialBase {
 	public abstract void initializeRandom(Random r);
 	public abstract void smooth();
 	public abstract void normalize();
+	public abstract void normalize(MultinomialBase other);
 	public abstract void checkDistribution();
 	public abstract void printDistribution();	
 }

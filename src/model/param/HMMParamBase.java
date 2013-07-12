@@ -62,6 +62,12 @@ public abstract class HMMParamBase {
 		observation.normalize();
 	}
 	
+	public void normalize(HMMParamBase other) {
+		initial.normalize(other.initial);
+		transition.normalize(other.transition);
+		observation.normalize(other.observation);
+	}
+	
 	public void cloneFrom(HMMParamBase source) {
 		initial.cloneFrom(source.initial);
 		observation.cloneFrom(source.observation);

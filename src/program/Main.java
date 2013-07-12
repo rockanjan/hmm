@@ -38,17 +38,17 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		//defaults
 		outFolderPrefix = "out/";
-		trainFile = "data/combined.txt.SPL";
-		devFile = "data/srl.txt";
+		trainFile = "data/srl.txt.all";
+		devFile = "data/combined.txt.SPL";
 		testFile = "data/test.txt.SPL";
 		vocabFile = trainFile;
-		numStates = 10;
+		numStates = 80;
 		numIter = 100;
-		String outFileTrain = "out/decoded/combined.decoded.txt";
-		String outFileDev = "out/decoded/srl.decoded.txt";
+		String outFileTrain = "out/decoded/srl.all.decoded.txt";
+		String outFileDev = "out/decoded/combined.decoded.txt";
 		String outFileTest = "out/decoded/test.decoded.txt";
-		modelType = HMMType.LOG_SCALE;
-		//modelType = HMMType.WITH_NO_FINAL_STATE;
+		//modelType = HMMType.LOG_SCALE;
+		modelType = HMMType.WITH_NO_FINAL_STATE;
 		
 		if(args.length > 0) {
 			try{
@@ -75,7 +75,7 @@ public class Main {
 		corpus.readVocab(vocabFile);
 		corpus.readTrain(trainFile);
 		corpus.readTest(testFile);
-		corpus.readDev(devFile);
+		//corpus.readDev(devFile);
 		//save vocab file
 		corpus.saveVocabFile(outFolderPrefix + "/model/vocab.txt");
 		if(modelType == HMMType.WITH_NO_FINAL_STATE) {
@@ -110,13 +110,18 @@ public class Main {
 		if(corpus.testInstanceList != null) {
 			System.out.println("Test data LL = " + corpus.testInstanceList.getLL(model));
 			test(model, corpus.testInstanceList, outFileTest);
+			testMaxPosterior(model, corpus.testInstanceList, outFileTest + ".posterior");
+			testPosteriorDistribution(model, corpus.testInstanceList, outFileTest + ".posterior_distribution");
 		}
 		if(corpus.devInstanceList != null) {
 			System.out.println("Dev data LL = " + corpus.devInstanceList.getLL(model));
 			test(model, corpus.devInstanceList, outFileDev);
+			testMaxPosterior(model, corpus.testInstanceList, outFileDev + ".posterior");
+			testPosteriorDistribution(model, corpus.testInstanceList, outFileDev + ".posterior_distribution");
 		}
 		test(model, corpus.trainInstanceList, outFileTrain);
-		//testPosteriorDistribution(model, corpus.testInstanceList, outFile + ".posterior_distribution");
+		testMaxPosterior(model, corpus.trainInstanceList, outFileTrain + ".posterior");
+		testPosteriorDistribution(model, corpus.testInstanceList, outFileTrain + ".posterior_distribution");
 	}
 	
 	public static void testPosteriorDistribution(HMMBase model, InstanceList instanceList, String outFile) {
@@ -164,11 +169,34 @@ public class Main {
 				pw.println();
 			}
 			pw.close();
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			System.err.format("Could not open file for writing %s\n", outFile);
 			e.printStackTrace();
 		}
 		System.out.println("Finished decoding");
+	}
+	
+	public static void testMaxPosterior(HMMBase model, InstanceList instanceList, String outFile) {
+		System.out.println("Decoding Data with Max Posterior");
+		Decoder decoder = new Decoder(model);
+		try{
+			PrintWriter pw = new PrintWriter(new FileWriter(outFile));
+			for(int n=0; n<instanceList.size(); n++) {
+				Instance instance = instanceList.get(n);
+				int[] decoded = decoder.posterior(instance);
+				for(int t=0; t<decoded.length; t++) {
+					String word = instance.getWord(t);
+					int state = decoded[t];
+					pw.println(state + "\t" + word);
+				}
+				pw.println();
+			}
+			pw.close();
+		} catch (IOException e) {
+			System.err.format("Could not open file for writing %s\n", outFile);
+			e.printStackTrace();
+		}
 	}
 	
 	public static void printParams() {

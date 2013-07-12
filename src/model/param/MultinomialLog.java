@@ -117,4 +117,10 @@ public class MultinomialLog extends MultinomialBase{
 		ml.initializeRandom(new Random());
 		ml.checkDistribution();
 	}
+
+	@Override
+	public void normalize(MultinomialBase other) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not yet implemented");
+	}
 }

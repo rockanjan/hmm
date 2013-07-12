@@ -44,11 +44,7 @@ public class ForwardBackwardScaled extends ForwardBackward{
 				alpha[0][i] = Double.MIN_VALUE; //fix
 				//System.err.format("ZERO alpha at initial. init = %f, obs=%f\n", pi, obs);
 			}
-			
-			scale[0] += alpha[0][i];
-			if(scale[0] == 0) {
-				throw new RuntimeException("Scale at initial position zero in forward");
-			}
+			scale[0] += alpha[0][i];			
 		}
 		for(int i=0; i<nrStates; i++) {
 			alpha[0][i] = alpha[0][i] / scale[0];
@@ -60,7 +56,7 @@ public class ForwardBackwardScaled extends ForwardBackward{
 			throw new RuntimeException("logLikelihood at initial position in forward is NaN");
 		}
 		//induction
-		for(int t = 1; t < T; t++) {
+		for(int t=1; t<T; t++) {
 			for(int j=0; j<nrStates; j++) {
 				double transSum = 0;
 				for(int i=0; i<nrStates; i++) {
@@ -69,21 +65,16 @@ public class ForwardBackwardScaled extends ForwardBackward{
 				double obs;
 				obs = observation.get(instance.words[t], j);
 				alpha[t][j] = transSum * obs;
-				
 				if(alpha[t][j] == 0) {
 					Stats.totalFixes++;
 					alpha[t][j] = Double.MIN_VALUE;//fix
 				}				
-				scale[t] += alpha[t][j];
-				if(scale[t] == 0) {
-					throw new RuntimeException("scale zero in forward");
-				}
+				scale[t] += alpha[t][j];				
 			}
 			//scale
 			for(int j=0; j<nrStates; j++) {
 				if(scale[t] <= 0) {
-					System.err.println("Scale is not positive");
-					System.exit(-1);
+					throw new RuntimeException("Scale is not positive");
 				}
 				alpha[t][j] = alpha[t][j] / scale[t];				
 			}
@@ -113,6 +104,9 @@ public class ForwardBackwardScaled extends ForwardBackward{
 					double trans = transition.get(j, i);
 					double obs;
 					obs = observation.get(instance.words[t+1], j);
+					if(obs == 0) {
+						obs = Double.MIN_VALUE;
+					}
 					sum += trans * obs * beta[t+1][j];
 				}
 				beta[t][i] = sum / scale[t];				
@@ -191,27 +185,20 @@ public class ForwardBackwardScaled extends ForwardBackward{
 			
 			for(int i=0; i<nrStates; i++) {
 				for(int j=0; j<nrStates; j++) {
-					transition.addToCounts(i, j, getTransitionPosterior(i, j, t) / normalizer);
+					transition.addToCounts(j, i, getTransitionPosterior(i, j, t) / normalizer);
 				}
-			}
-		}
-		if(model.hmmType == HMMType.WITH_FINAL_STATE) {
-			//transition to fake state
-			for(int i=0; i<nrStates; i++) {
-				//double value = getStatePosterior(T-1, i) * forwardBackward.model.param.transition.get(nrStates, i);
-				//transition.addToCounts(nrStates, i, value);
-			}
-		}
+			}			
+		}		
 	}
 	
 	/*
-	 * Gives the transition posterior probability
+	 * Gives the transition posterior probability numerator
 	 */
 	public double getTransitionPosterior(int currentState, int nextState, int position) {
 		//xi in Rabiner Tutorial
 		double alphaValue = alpha[position][currentState];
-		double trans = model.param.transition.get(nextState, currentState); //transition to next given current
-		double obs = model.param.observation.get(instance.words[position+1], nextState);
+		double trans = transition.get(nextState, currentState); //transition to next given current
+		double obs = observation.get(instance.words[position+1], nextState);
 		double betaValue = beta[position+1][nextState];		
 		double value = alphaValue * trans * obs * betaValue;
 		return value;
@@ -223,6 +210,6 @@ public class ForwardBackwardScaled extends ForwardBackward{
 	
 	@Override
 	public void checkForwardBackward() {
-				
+		
 	}
 }

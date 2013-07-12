@@ -23,10 +23,13 @@ public class EM {
 	double bestOldLL = -Double.MAX_VALUE;
 	double LL = 0;
 	
+	double bestOldLLDev = -Double.MAX_VALUE;
+	double LLDev = 0;
+	
 	
 	//convergence criteria
 	double precision = 1e-6;
-	int maxConsecutiveDecreaseLimit = 5;
+	int maxConsecutiveDecreaseLimit = 3;
 	
 	HMMParamBase expectedCounts;
 	
@@ -83,23 +86,37 @@ public class EM {
 			Stats.totalFixes = 0;
 			eStep();
 			//add more and more examples per iteration
-			sampleSentenceSize += 1000;
+			//sampleSentenceSize += 1000;
+			StringBuffer sb = new StringBuffer();
 			if(iterCount>0) {
-				System.out.format("LL %.2f Diff %.2f \t Iter %d \t Fixes: %d \t E-step time %s\n", LL, (LL - bestOldLL), iterCount, Stats.totalFixes, eStepTime.stop());
+				sb.append(String.format("LL %.2f Diff %.2f \t Iter %d", LL, (LL - bestOldLL), iterCount));
+			}
+			if(LL > bestOldLL) {
+				bestOldLL = LL;
+			}
+			//m-step
+			mStep();
+			if(c.devInstanceList != null) {
+				LLDev = c.devInstanceList.getLL(model);
+				if(iterCount > 0) {
+					sb.append(String.format(" DevLL %.2f \t devDiff %.2f ", LLDev, (LLDev - bestOldLLDev)));
+				}
 			}
 			if(isConverged()) {
 				break;
 			}
-			//m-step
-			mStep();
-			System.out.println("Dev data LL : " + c.devInstanceList.getLL(model));
+			sb.append(String.format("\t Fixes: %d \t E-step time %s", Stats.totalFixes, eStepTime.stop()));
+			System.out.println(sb.toString());
 		}
 		System.out.println("Total EM Time : " + totalEMTime.stop());
 	}
 	
 	public boolean isConverged() {
+		if(c.devInstanceList == null) { //use the training data itself for checking convergence
+			LLDev = LL;
+		}
 		
-		double decreaseRatio = (LL - bestOldLL)/Math.abs(bestOldLL);
+		double decreaseRatio = (LLDev - bestOldLLDev)/Math.abs(LLDev);
 		//System.out.println("Decrease Ratio: %.5f " + decreaseRatio);
 		if(iterCount % 50 == 0) {
 			model.saveModel(iterCount);
@@ -111,7 +128,7 @@ public class EM {
 			return true;
 		}
 		
-		if(LL < bestOldLL) {
+		if(LLDev < bestOldLLDev) {
 			if(lowerCount == 0) {
 				//save the best model so far
 				System.out.println("Saving the best model so far");
@@ -125,7 +142,7 @@ public class EM {
 			return false;
 		} else {
 			lowerCount = 0;
-			bestOldLL = LL;
+			bestOldLLDev = LLDev;
 			return false;
 		}
 	}

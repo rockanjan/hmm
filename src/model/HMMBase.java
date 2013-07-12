@@ -27,7 +27,8 @@ public abstract class HMMBase {
 	}
 
 	public void updateFromCounts(HMMParamBase counts) {
-		counts.normalize();
+		//counts.normalize();
+		counts.normalize(param);
 		param.cloneFrom(counts);
 	}
 	

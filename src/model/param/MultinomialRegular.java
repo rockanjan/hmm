@@ -45,7 +45,7 @@ public class MultinomialRegular extends MultinomialBase{
 	
 	@Override
 	public void normalize() {
-		smooth();
+		//smooth();
 		for(int i=0; i<y; i++) {
 			double sum = 0;
 			for(int j=0; j<x; j++) {
@@ -97,5 +97,37 @@ public class MultinomialRegular extends MultinomialBase{
 	@Override
 	public void printDistribution() {
 		MyArray.printTable(count);
+	}
+
+	@Override
+	public void normalize(MultinomialBase other) {
+		for(int i=0; i<y; i++) {
+			double sum = 0;
+			for(int j=0; j<x; j++) {
+				//smoothing done using previous probability
+				if(count[j][i] == 0) {
+					count[j][i] = other.count[j][i];
+				}
+				sum += count[j][i];
+			}
+			//MyArray.printTable(count);
+			//normalize
+			if(sum == 0) {
+				throw new RuntimeException("Sum = 0 in normalization");
+			}
+			for(int j=0; j<x; j++) {
+				count[j][i] = count[j][i] / sum;
+				if(Double.isNaN(count[j][i])) {
+					System.out.format("count[%d][%d] = %f\n", j,i,count[j][i]);
+					System.out.format("sum = %f\n", sum);
+					throw new RuntimeException("Probability after normalization is NaN");
+				}
+				if(count[j][i] == 0) {
+					//System.err.println("Prob distribution zero after normalization");
+				}
+			}
+		}
+		//MyArray.printTable(count);
+		checkDistribution();
 	}	
 }
