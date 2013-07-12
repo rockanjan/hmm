@@ -38,17 +38,17 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		//defaults
 		outFolderPrefix = "out/";
-		trainFile = "data/srl.txt.all";
+		trainFile = "data/srl.txt";
 		devFile = "data/combined.txt.SPL";
 		testFile = "data/test.txt.SPL";
 		vocabFile = trainFile;
-		numStates = 80;
+		numStates = 5;
 		numIter = 100;
 		String outFileTrain = "out/decoded/srl.all.decoded.txt";
 		String outFileDev = "out/decoded/combined.decoded.txt";
 		String outFileTest = "out/decoded/test.decoded.txt";
-		//modelType = HMMType.LOG_SCALE;
-		modelType = HMMType.WITH_NO_FINAL_STATE;
+		modelType = HMMType.LOG_SCALE;
+		//modelType = HMMType.WITH_NO_FINAL_STATE;
 		
 		if(args.length > 0) {
 			try{

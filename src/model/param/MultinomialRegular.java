@@ -121,10 +121,7 @@ public class MultinomialRegular extends MultinomialBase{
 					System.out.format("count[%d][%d] = %f\n", j,i,count[j][i]);
 					System.out.format("sum = %f\n", sum);
 					throw new RuntimeException("Probability after normalization is NaN");
-				}
-				if(count[j][i] == 0) {
-					//System.err.println("Prob distribution zero after normalization");
-				}
+				}				
 			}
 		}
 		//MyArray.printTable(count);

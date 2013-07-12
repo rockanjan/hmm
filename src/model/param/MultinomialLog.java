@@ -120,7 +120,33 @@ public class MultinomialLog extends MultinomialBase{
 
 	@Override
 	public void normalize(MultinomialBase other) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not yet implemented");
+		for(int i=0; i<y; i++) {
+			double sum = 0;
+			for(int j=0; j<x; j++) {
+				//smoothing done using previous probability
+				if(count[j][i] == 0) {
+					count[j][i] = Math.exp(other.count[j][i]);
+				}
+				sum += count[j][i];
+			}
+			//MyArray.printTable(count);
+			//normalize
+			if(sum == 0) {
+				throw new RuntimeException("Sum = 0 in normalization");
+			}
+			for(int j=0; j<x; j++) {
+				count[j][i] = count[j][i] / sum;
+				if(count[j][i] == 0) {
+					//System.err.println("Prob distribution zero after normalization");
+					Stats.totalFixes++;
+					//fix
+					count[j][i] = -Double.MAX_EXPONENT;
+				} else {
+					count[j][i] = Math.log(count[j][i]);
+				}
+			}
+		}
+		//MyArray.printTable(count);
+		checkDistribution();
 	}
 }
