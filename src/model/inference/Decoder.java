@@ -144,6 +144,7 @@ public class Decoder {
 			}
 			decoded[t] = maxIndex;
 		}
+		instance.clearInference();
 		return decoded;
 	}
 	
@@ -155,6 +156,7 @@ public class Decoder {
 				decoded[t][i] = instance.forwardBackward.posterior[t][i];
 			}
 		}
+		instance.clearInference();
 		return decoded;
 	}
 }
