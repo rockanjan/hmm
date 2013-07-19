@@ -48,8 +48,8 @@ public class Main {
 		String outFileTrain = "out/decoded/rcv1.decoded.txt";
 		String outFileDev = "out/decoded/srl.decoded.txt";
 		String outFileTest = "out/decoded/combined.decoded.txt";
-		modelType = HMMType.LOG_SCALE;
-		//modelType = HMMType.WITH_NO_FINAL_STATE;
+		//modelType = HMMType.LOG_SCALE;
+		modelType = HMMType.WITH_NO_FINAL_STATE;
 		
 		if(args.length > 0) {
 			try{
@@ -64,9 +64,6 @@ public class Main {
 			}
 			
 		}
-		//modelType = HMMType.LOG_SCALE;
-		//modelType = HMMType.WITH_FINAL_STATE;
-		
 		printParams();
 		corpus = new Corpus("\\s+", vocabThreshold);
 		
