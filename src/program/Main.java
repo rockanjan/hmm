@@ -17,7 +17,7 @@ import corpus.Instance;
 import corpus.InstanceList;
 
 public class Main {
-	
+	public static int USE_THREAD_COUNT = 4;
 	/** user parameters **/
 	static String delimiter = "\\+";
 	static int numIter;
@@ -35,18 +35,18 @@ public class Main {
 	static HMMType modelType;
 	
 	/** user parameters end **/
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException {		
 		//defaults
 		outFolderPrefix = "out/";
-		trainFile = "data/srl.txt";
-		devFile = "data/combined.txt.SPL";
-		testFile = "data/test.txt.SPL";
+		trainFile = "data/rcv1.txt.SPL";
+		devFile = "data/srl.txt";
+		testFile = "data/combined.txt.SPL";
 		vocabFile = trainFile;
 		numStates = 5;
 		numIter = 100;
-		String outFileTrain = "out/decoded/srl.all.decoded.txt";
-		String outFileDev = "out/decoded/combined.decoded.txt";
-		String outFileTest = "out/decoded/test.decoded.txt";
+		String outFileTrain = "out/decoded/rcv1.decoded.txt";
+		String outFileDev = "out/decoded/srl.decoded.txt";
+		String outFileTest = "out/decoded/combined.decoded.txt";
 		modelType = HMMType.LOG_SCALE;
 		//modelType = HMMType.WITH_NO_FINAL_STATE;
 		
@@ -68,7 +68,6 @@ public class Main {
 		
 		printParams();
 		corpus = new Corpus("\\s+", vocabThreshold);
-		
 		
 		
 		//TRAIN

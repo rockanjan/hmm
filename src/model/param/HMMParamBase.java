@@ -103,4 +103,10 @@ public abstract class HMMParamBase {
 				this.transition.equalsApprox(other.transition) &&
 				this.observation.equalsApprox(other.observation));
 	}
+	
+	public void addFromOtherParam(HMMParamBase other) {
+		initial.addFromOtherMultinomial(other.initial);
+		transition.addFromOtherMultinomial(other.transition);
+		observation.addFromOtherMultinomial(other.observation);
+	}
 }
