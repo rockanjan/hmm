@@ -36,13 +36,14 @@ public class Main {
 	
 	/** user parameters end **/
 	public static void main(String[] args) throws IOException {		
+		System.out.println("Number of threads : " + USE_THREAD_COUNT);
 		//defaults
 		outFolderPrefix = "out/";
 		trainFile = "data/rcv1.txt.SPL";
 		devFile = "data/srl.txt";
 		testFile = "data/combined.txt.SPL";
 		vocabFile = trainFile;
-		numStates = 5;
+		numStates = 80;
 		numIter = 100;
 		String outFileTrain = "out/decoded/rcv1.decoded.txt";
 		String outFileDev = "out/decoded/srl.decoded.txt";
