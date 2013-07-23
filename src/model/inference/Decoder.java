@@ -25,8 +25,6 @@ public class Decoder {
 	
 	private int[] viterbiRegular(Instance instance) {
 		int[] decoded = new int[instance.T];
-		instance.doInference(model);
-		
 		double[][] probLattice = new double[instance.T][model.nrStates];
 		int[][] stateLattice = new int[instance.T][model.nrStates];
 		
@@ -72,7 +70,6 @@ public class Decoder {
 			decoded[t] = stateLattice[t+1][decoded[t+1]];			
 		}
 		//MyArray.printTable(probLattice);
-		instance.clearInference();
 		return decoded;
 	}
 	
