@@ -31,4 +31,16 @@ public class MyArray {
 			System.out.println();
 		}
 	}
+	
+	public static void addToMatrix(double[][] finalMatrix, double[][] newMatrix) {
+		if(finalMatrix.length != newMatrix.length || finalMatrix[0].length != newMatrix[0].length) {
+			throw new RuntimeException("Matrix dimension mismatch during addition");			
+		}
+		
+		for(int i=0; i<finalMatrix.length; i++) {
+			for(int j=0; j<finalMatrix[0].length; j++) {
+				finalMatrix[i][j] += newMatrix[i][j];
+			}
+		}
+	}
 }

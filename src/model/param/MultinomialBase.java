@@ -62,6 +62,12 @@ public abstract class MultinomialBase {
 		return result;
 	}
 	
+	/*
+	 * adds the counts from other multinomials
+	 */
+	public void addFromOtherMultinomial(MultinomialBase other) {
+		MyArray.addToMatrix(this.count, other.count);
+	}
 	public abstract void initializeRandom(Random r);
 	public abstract void smooth();
 	public abstract void normalize();
