@@ -11,6 +11,7 @@ public abstract class MultinomialBase {
 	//x,y == P(x given y)
 	int x,y;
 	public double[][] count;
+	public double[][] oldCount;
 	
 	public MultinomialBase(int x, int y) {
 		this.x = x; this.y = y;

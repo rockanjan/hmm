@@ -39,15 +39,15 @@ public class Main {
 		System.out.println("Number of threads : " + USE_THREAD_COUNT);
 		//defaults
 		outFolderPrefix = "out/";
-		trainFile = "data/rcv1.txt.SPL";
+		trainFile = "pos_ul.10k.notag";
 		devFile = "data/srl.txt";
-		testFile = "data/combined.txt.SPL";
+		testFile = "pos_ul.test.notag";
 		vocabFile = trainFile;
-		numStates = 80;
-		numIter = 100;
-		String outFileTrain = "out/decoded/rcv1.decoded.txt";
+		numStates = 20;
+		numIter = 60;
+		String outFileTrain = "out/decoded/pos_ul.10k.notag.decoded";
 		String outFileDev = "out/decoded/srl.decoded.txt";
-		String outFileTest = "out/decoded/combined.decoded.txt";
+		String outFileTest = "out/decoded/pos_ul.test.notag.decoded";
 		//modelType = HMMType.LOG_SCALE;
 		modelType = HMMType.WITH_NO_FINAL_STATE;
 		
@@ -72,7 +72,7 @@ public class Main {
 		corpus.readVocab(vocabFile);
 		corpus.readTrain(trainFile);
 		corpus.readTest(testFile);
-		corpus.readDev(devFile);
+		//corpus.readDev(devFile);
 		//save vocab file
 		corpus.saveVocabFile(outFolderPrefix + "/model/vocab.txt");
 		if(modelType == HMMType.WITH_NO_FINAL_STATE) {
@@ -119,9 +119,10 @@ public class Main {
 		if(corpus.testInstanceList != null) {
 			System.out.println("Test data LL = " + corpus.testInstanceList.getLL(model));
 			test(model, corpus.testInstanceList, outFileTest);
-			testMaxPosterior(model, corpus.testInstanceList, outFileTest + ".posterior");
+			//testMaxPosterior(model, corpus.testInstanceList, outFileTest + ".posterior");
 			//testPosteriorDistribution(model, corpus.testInstanceList, outFileTest + ".posterior_distribution");
 		}
+		/*
 		if(corpus.devInstanceList != null) {
 			System.out.println("Dev data LL = " + corpus.devInstanceList.getLL(model));
 			test(model, corpus.devInstanceList, outFileDev);
@@ -131,6 +132,7 @@ public class Main {
 		test(model, corpus.trainInstanceList, outFileTrain);
 		testMaxPosterior(model, corpus.trainInstanceList, outFileTrain + ".posterior");
 		//testPosteriorDistribution(model, corpus.testInstanceList, outFileTrain + ".posterior_distribution");
+		*/
 	}
 	
 	public static void testPosteriorDistribution(HMMBase model, InstanceList instanceList, String outFile) {

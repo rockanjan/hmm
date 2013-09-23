@@ -36,22 +36,34 @@ public class MultinomialLog extends MultinomialBase{
 	
 	@Override
 	public void smooth() {
-		//hyperparameter
-		double small = 100;
-		for(int i=0; i<y; i++) {
-			for(int j=0; j<x; j++) {
-				if(count[j][i] == 0) {
-					Stats.totalFixes++;
-					count[j][i] = small;
+		if(oldCount != null) {
+			for(int i=0; i<y; i++) {
+				for(int j=0; j<x; j++) {
+					if(count[j][i] == 0) {
+						Stats.totalFixes++;
+						count[j][i] = oldCount[j][i];
+					}
 				}
 			}
-		}		
+		} else {
+			//hyperparameter
+			double small = 10;
+			for(int i=0; i<y; i++) {
+				for(int j=0; j<x; j++) {
+					if(count[j][i] == 0) {
+						Stats.totalFixes++;
+						count[j][i] = small;
+					}
+				}
+			}
+		}
 	}
 	
 	//when reached here, the counts are normal (no logs)
 	@Override
 	public void normalize() {
 		smooth();
+		oldCount = MyArray.getCloneOfMatrix(count);
 		for(int i=0; i<y; i++) {
 			double sum = 0;
 			for(int j=0; j<x; j++) {

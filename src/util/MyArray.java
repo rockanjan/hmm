@@ -43,4 +43,14 @@ public class MyArray {
 			}
 		}
 	}
+	
+	public static double[][] getCloneOfMatrix(double[][] matrix) {
+		double[][] cloned = new double[matrix.length][matrix[0].length];
+		for(int i=0; i<matrix.length; i++) {
+			for(int j=0; j<matrix.length; j++) {
+				cloned[i][j] = matrix[i][j];
+			}
+		}
+		return cloned;
+	}
 }
