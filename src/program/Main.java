@@ -17,7 +17,7 @@ import corpus.Instance;
 import corpus.InstanceList;
 
 public class Main {
-	public static int USE_THREAD_COUNT = 4;
+	public static int USE_THREAD_COUNT = 8;
 	/** user parameters **/
 	static String delimiter = "\\+";
 	static int numIter;
@@ -29,7 +29,7 @@ public class Main {
 	static String devFile;
 	static String outFolderPrefix;
 	static int numStates; 	
-	static int vocabThreshold = 1; //only above this included
+	static int vocabThreshold = 2; //only above this included
 	static HMMBase model;
 	static Corpus corpus;
 	static HMMType modelType;
@@ -39,13 +39,13 @@ public class Main {
 		System.out.println("Number of threads : " + USE_THREAD_COUNT);
 		//defaults
 		outFolderPrefix = "out/";
-		trainFile = "pos_ul.10k.notag";
-		devFile = "data/srl.txt";
-		testFile = "pos_ul.test.notag";
+		trainFile = "data/combined_pos.all.txt";
+		devFile = "data/pos.dev.txt";
+		testFile = "data/pos_ul.test.notag";
 		vocabFile = trainFile;
-		numStates = 20;
-		numIter = 60;
-		String outFileTrain = "out/decoded/pos_ul.10k.notag.decoded";
+		numStates = 80;
+		numIter = 100;
+		String outFileTrain = "out/decoded/combined_pos.all.txt.decoded";
 		String outFileDev = "out/decoded/srl.decoded.txt";
 		String outFileTest = "out/decoded/pos_ul.test.notag.decoded";
 		//modelType = HMMType.LOG_SCALE;
@@ -72,7 +72,7 @@ public class Main {
 		corpus.readVocab(vocabFile);
 		corpus.readTrain(trainFile);
 		corpus.readTest(testFile);
-		//corpus.readDev(devFile);
+		corpus.readDev(devFile);
 		//save vocab file
 		corpus.saveVocabFile(outFolderPrefix + "/model/vocab.txt");
 		if(modelType == HMMType.WITH_NO_FINAL_STATE) {
@@ -95,6 +95,7 @@ public class Main {
 		em.start();
 		model.saveModel();
 		
+		
 		/*
 		//TEST
 		corpus.readVocabFromDictionary("out/model/vocab.txt");
@@ -113,7 +114,7 @@ public class Main {
 			System.out.println("HMM Log scale");
 			model = new HMMNoFinalStateLog(numStates, corpus.corpusVocab.vocabSize);
 		}		
-		model.loadModel("/home/anjan/workspace/HMM/out/model/model_final_states_5.txt");
+		model.loadModel("/home/anjan/workspace/HMM/out/model/model_final_states_80.txt");
 		*/
 		
 		if(corpus.testInstanceList != null) {
@@ -129,10 +130,11 @@ public class Main {
 			testMaxPosterior(model, corpus.testInstanceList, outFileDev + ".posterior");
 			//testPosteriorDistribution(model, corpus.testInstanceList, outFileDev + ".posterior_distribution");
 		}
-		test(model, corpus.trainInstanceList, outFileTrain);
-		testMaxPosterior(model, corpus.trainInstanceList, outFileTrain + ".posterior");
-		//testPosteriorDistribution(model, corpus.testInstanceList, outFileTrain + ".posterior_distribution");
 		*/
+		test(model, corpus.trainInstanceList, outFileTrain);
+		//testMaxPosterior(model, corpus.trainInstanceList, outFileTrain + ".posterior");
+		//testPosteriorDistribution(model, corpus.testInstanceList, outFileTrain + ".posterior_distribution");
+		
 	}
 	
 	public static void testPosteriorDistribution(HMMBase model, InstanceList instanceList, String outFile) {
