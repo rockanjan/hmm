@@ -40,6 +40,8 @@ public class EM {
 	int iterCount = 0;
 
 	public static int sampleSentenceSize = Integer.MAX_VALUE;
+	
+	public Object updateLock = new Object();
 
 	public EM(int numIter, Corpus c, HMMBase model) {
 		this.numIter = numIter;
@@ -101,8 +103,10 @@ public class EM {
 				e.printStackTrace();
 			}
 			// add to the final expected counts
-			expectedCounts.addFromOtherParam(worker.threadExpectedCounts);
-			LL += worker.threadLL;
+			synchronized (updateLock) {
+				expectedCounts.addFromOtherParam(worker.threadExpectedCounts);
+				LL += worker.threadLL;
+			}
 		}
 	}
 

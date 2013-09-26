@@ -32,7 +32,7 @@ public class MultinomialRegular extends MultinomialBase{
 	@Override
 	public void smooth() {
 		//hyperparameter
-		double small = 100;
+		double small = 1e-2;
 		for(int i=0; i<y; i++) {
 			for(int j=0; j<x; j++) {
 				if(count[j][i] == 0) {
@@ -45,7 +45,7 @@ public class MultinomialRegular extends MultinomialBase{
 	
 	@Override
 	public void normalize() {
-		//smooth();
+		smooth();
 		for(int i=0; i<y; i++) {
 			double sum = 0;
 			for(int j=0; j<x; j++) {

@@ -43,7 +43,7 @@ public class Main {
 		devFile = "data/pos.dev.txt";
 		testFile = "data/pos_ul.test.notag";
 		vocabFile = trainFile;
-		numStates = 80;
+		numStates = 200;
 		numIter = 100;
 		String outFileTrain = "out/decoded/combined_pos.all.txt.decoded";
 		String outFileDev = "out/decoded/srl.decoded.txt";
