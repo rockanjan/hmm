@@ -2,10 +2,7 @@ package model.param;
 
 import java.util.Random;
 
-import javax.management.RuntimeErrorException;
-
 import util.MyArray;
-import util.Stats;
 
 public class MultinomialRegular extends MultinomialBase{
 	public MultinomialRegular(int x, int y) {
@@ -35,10 +32,7 @@ public class MultinomialRegular extends MultinomialBase{
 		double small = 1e-2;
 		for(int i=0; i<y; i++) {
 			for(int j=0; j<x; j++) {
-				if(count[j][i] == 0) {
-					Stats.totalFixes++;
-					count[j][i] = small;
-				}
+				count[j][i] += small;				
 			}
 		}		
 	}

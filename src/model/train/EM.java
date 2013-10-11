@@ -29,7 +29,7 @@ public class EM {
 
 	// convergence criteria
 	double precision = 1e-6;
-	int maxConsecutiveDecreaseLimit = 3;
+	int maxConsecutiveDecreaseLimit = 10;
 
 	HMMParamBase expectedCounts;
 

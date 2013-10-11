@@ -39,13 +39,13 @@ public class Main {
 		System.out.println("Number of threads : " + USE_THREAD_COUNT);
 		//defaults
 		outFolderPrefix = "out/";
-		trainFile = "data/brown_train.txt";
-		devFile = "data/brown_dev.txt";
-		testFile = "data/brown_test.txt";
+		trainFile = "data/test.txt.SPL";
+		devFile = null;
+		testFile = null;
 		vocabFile = trainFile;
-		numStates = 500;
-		numIter = 120;
-		String outFileTrain = "out/decoded/brown_train.txt.decoded";
+		numStates = 200;
+		numIter = 200;
+		String outFileTrain = "out/decoded/test.txt.SPL.decoded";
 		String outFileDev = "out/decoded/brown_dev.txt.decoded";
 		String outFileTest = "out/decoded/bronw_test.txt.decoded";
 		//modelType = HMMType.LOG_SCALE;
@@ -71,8 +71,10 @@ public class Main {
 		//TRAIN
 		corpus.readVocab(vocabFile);
 		corpus.readTrain(trainFile);
-		corpus.readTest(testFile);
-		corpus.readDev(devFile);
+		if(testFile != null)
+			corpus.readTest(testFile);
+		if(devFile != null)
+			corpus.readDev(devFile);
 		//save vocab file
 		corpus.saveVocabFile(outFolderPrefix + "/model/vocab.txt");
 		if(modelType == HMMType.WITH_NO_FINAL_STATE) {
@@ -114,9 +116,11 @@ public class Main {
 			System.out.println("HMM Log scale");
 			model = new HMMNoFinalStateLog(numStates, corpus.corpusVocab.vocabSize);
 		}		
-		model.loadModel("/home/anjan/workspace/HMM/out/model/model_final_states_80.txt");
+		model.loadModel("/home/anjan/workspace/HMM/out/model/model_final_states_100_brown.txt");
+		//EM em = new EM(numIter, corpus, model);
+		//start training with EM
+		//em.start();
 		*/
-		
 		if(corpus.testInstanceList != null) {
 			double testLL = corpus.testInstanceList.getLL(model);
 			testLL = testLL / corpus.testInstanceList.numberOfTokens;
