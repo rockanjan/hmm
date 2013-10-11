@@ -3,15 +3,13 @@ package model.train;
 import java.util.ArrayList;
 import java.util.List;
 
-import program.Main;
-
 import model.HMMBase;
 import model.HMMType;
 import model.param.HMMParamBase;
 import model.param.HMMParamFinalState;
 import model.param.HMMParamNoFinalState;
 import model.param.HMMParamNoFinalStateLog;
-
+import program.Main;
 import util.Stats;
 import util.Timing;
 import corpus.Corpus;
@@ -166,9 +164,11 @@ public class EM {
 			// add more and more examples per iteration
 			// sampleSentenceSize += 1000;
 			StringBuffer sb = new StringBuffer();
+			LL = LL / c.trainInstanceList.numberOfTokens;
+			double trainPreplex = Math.pow(2, -LL/Math.log(2));
 			if (iterCount > 0) {
-				sb.append(String.format("LL %.2f Diff %.2f \t Iter %d", LL,
-						(LL - bestOldLL), iterCount));
+				sb.append(String.format("LL %.6f Diff %.6f preplex %.2f \t Iter %d", LL,
+						(LL - bestOldLL), trainPreplex, iterCount));
 			}
 			if (LL > bestOldLL) {
 				bestOldLL = LL;
@@ -177,9 +177,11 @@ public class EM {
 			mStep();
 			if (c.devInstanceList != null) {
 				LLDev = c.devInstanceList.getLL(model);
+				LLDev = LLDev/c.devInstanceList.numberOfTokens;
+				double devPerplex = Math.pow(2, -LLDev/Math.log(2));
 				if (iterCount > 0) {
-					sb.append(String.format(" DevLL %.2f \t devDiff %.2f ",
-							LLDev, (LLDev - bestOldLLDev)));
+					sb.append(String.format(" DevLL %.6f \t devDiff %.6f devPreplex %.2f",
+							LLDev, (LLDev - bestOldLLDev), devPerplex));
 				}
 			}
 			if (isConverged()) {

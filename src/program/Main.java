@@ -21,7 +21,7 @@ public class Main {
 	/** user parameters **/
 	static String delimiter = "\\+";
 	static int numIter;
-	static long seed = 4321;
+	static long seed = 1;
 	
 	static String trainFile;
 	static String vocabFile;
@@ -29,7 +29,7 @@ public class Main {
 	static String devFile;
 	static String outFolderPrefix;
 	static int numStates; 	
-	static int vocabThreshold = 2; //only above this included
+	static int vocabThreshold = 3; //only above this included
 	static HMMBase model;
 	static Corpus corpus;
 	static HMMType modelType;
@@ -39,15 +39,15 @@ public class Main {
 		System.out.println("Number of threads : " + USE_THREAD_COUNT);
 		//defaults
 		outFolderPrefix = "out/";
-		trainFile = "data/combined_pos.all.txt";
-		devFile = "data/pos.dev.txt";
-		testFile = "data/pos_ul.test.notag";
+		trainFile = "data/brown_train.txt";
+		devFile = "data/brown_dev.txt";
+		testFile = "data/brown_test.txt";
 		vocabFile = trainFile;
-		numStates = 200;
+		numStates = 100;
 		numIter = 100;
-		String outFileTrain = "out/decoded/combined_pos.all.txt.decoded";
-		String outFileDev = "out/decoded/srl.decoded.txt";
-		String outFileTest = "out/decoded/pos_ul.test.notag.decoded";
+		String outFileTrain = "out/decoded/brown_train.txt.decoded";
+		String outFileDev = "out/decoded/brown_dev.txt.decoded";
+		String outFileTest = "out/decoded/bronw_test.txt.decoded";
 		//modelType = HMMType.LOG_SCALE;
 		modelType = HMMType.WITH_NO_FINAL_STATE;
 		

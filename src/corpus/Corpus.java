@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 public class Corpus {
@@ -18,7 +16,7 @@ public class Corpus {
 	public InstanceList testInstanceList;
 	public InstanceList devInstanceList;
 	public InstanceList randomTrainingSampleInstanceList;
-	Random random = new Random(4321);
+	Random random = new Random(1);
 
 	public Vocabulary corpusVocab;
 
@@ -51,6 +49,7 @@ public class Corpus {
 				}
 			}
 		}
+		devInstanceList.numberOfTokens = totalWords;
 		System.out.println("Dev Instances: " + devInstanceList.size());
 		System.out.println("Dev token count: " + totalWords);
 		System.out.println("Dev unknown count : " + totalUnknown);
@@ -77,6 +76,7 @@ public class Corpus {
 				}
 			}
 		}
+		testInstanceList.numberOfTokens = totalWords;
 		System.out.println("Test Instances: " + testInstanceList.size());
 		System.out.println("Test token count: " + totalWords);
 		System.out.println("Test unknown count : " + totalUnknown);
@@ -103,6 +103,7 @@ public class Corpus {
 				}
 			}
 		}
+		trainInstanceList.numberOfTokens = totalWords;
 		System.out.println("Train Instances: " + trainInstanceList.size());
 		System.out.println("Train token count: " + totalWords);
 		System.out.println("Train unknown count : " + totalUnknown);
