@@ -43,8 +43,8 @@ public class Main {
 		devFile = "data/brown_dev.txt";
 		testFile = "data/brown_test.txt";
 		vocabFile = trainFile;
-		numStates = 100;
-		numIter = 100;
+		numStates = 500;
+		numIter = 120;
 		String outFileTrain = "out/decoded/brown_train.txt.decoded";
 		String outFileDev = "out/decoded/brown_dev.txt.decoded";
 		String outFileTest = "out/decoded/bronw_test.txt.decoded";
@@ -118,7 +118,11 @@ public class Main {
 		*/
 		
 		if(corpus.testInstanceList != null) {
-			System.out.println("Test data LL = " + corpus.testInstanceList.getLL(model));
+			double testLL = corpus.testInstanceList.getLL(model);
+			testLL = testLL / corpus.testInstanceList.numberOfTokens;
+			double testPerplexity = Math.pow(2, -testLL/Math.log(2));
+			System.out.println("Test data LL = " + testLL + " perplexity = " + testPerplexity);
+			
 			test(model, corpus.testInstanceList, outFileTest);
 			//testMaxPosterior(model, corpus.testInstanceList, outFileTest + ".posterior");
 			//testPosteriorDistribution(model, corpus.testInstanceList, outFileTest + ".posterior_distribution");
