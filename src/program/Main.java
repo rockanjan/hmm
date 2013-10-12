@@ -17,7 +17,7 @@ import corpus.Instance;
 import corpus.InstanceList;
 
 public class Main {
-	public static int USE_THREAD_COUNT = 8;
+	public static int USE_THREAD_COUNT = 4;
 	/** user parameters **/
 	static String delimiter = "\\+";
 	static int numIter;
@@ -35,7 +35,8 @@ public class Main {
 	static HMMType modelType;
 	
 	/** user parameters end **/
-	public static void main(String[] args) throws IOException {		
+	public static void main(String[] args) throws IOException {
+		EM.sampleSentenceSize = Integer.MAX_VALUE;
 		System.out.println("Number of threads : " + USE_THREAD_COUNT);
 		//defaults
 		outFolderPrefix = "out/";
@@ -44,7 +45,7 @@ public class Main {
 		testFile = null;
 		vocabFile = trainFile;
 		numStates = 200;
-		numIter = 200;
+		numIter = 50;
 		String outFileTrain = "out/decoded/test.txt.SPL.decoded";
 		String outFileDev = "out/decoded/brown_dev.txt.decoded";
 		String outFileTest = "out/decoded/bronw_test.txt.decoded";

@@ -125,6 +125,7 @@ public class Corpus {
 		randomTrainingSampleInstanceList = new InstanceList();
 		if(trainInstanceList.size() <= size) {
 			randomTrainingSampleInstanceList.addAll(trainInstanceList);
+			randomTrainingSampleInstanceList.numberOfTokens = trainInstanceList.numberOfTokens;
 		} else {
 			ArrayList<Integer> randomInts = new ArrayList<Integer>();			
 			for(int i=0; i<trainInstanceList.size(); i++) {
@@ -134,6 +135,7 @@ public class Corpus {
 			for(int i=0; i<size; i++) {
 				Instance instance = trainInstanceList.get(randomInts.get(i));
 				randomTrainingSampleInstanceList.add(instance);				
+				randomTrainingSampleInstanceList.numberOfTokens += instance.T;
 			}			
 		}
 	}	
