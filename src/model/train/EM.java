@@ -38,13 +38,28 @@ public class EM {
 	int iterCount = 0;
 
 	public static int sampleSentenceSize = Integer.MAX_VALUE;
-	
+	public double adaptiveWeight = 1.0;
+	public double t0 = 2;
+	public static double alpha = 0.9;
 	public Object updateLock = new Object();
 
 	public EM(int numIter, Corpus c, HMMBase model) {
 		this.numIter = numIter;
 		this.c = c;
 		this.model = model;
+	}
+	
+	public void setAdaptiveWeight() {
+		//fraction of data
+		double f = 1.0 * c.randomTrainingSampleInstanceList.size() / c.trainInstanceList.size();
+		if(f == 1) {
+			System.out.println("fraction = 1, all dataset used");
+			adaptiveWeight = 1.0;
+		} else {
+			//standard adaptiveWeight technique
+			//adaptiveWeight = (t0 + iterCount)^(-alpha)
+			adaptiveWeight = Math.pow((t0 + iterCount), -alpha);
+		}	
 	}
 	
 	public void eStep() {
@@ -140,13 +155,12 @@ public class EM {
 	}
 
 	public void mStep() {
-		// MyArray.printTable(expectedCounts.initial.count);
-		// MyArray.printTable(expectedCounts.transition.count);
-		// MyArray.printTable(expectedCounts.observation.count);
-		model.updateFromCounts(expectedCounts);
-		// model.param.initial.printDistribution();
-		// model.param.transition.printDistribution();
-		// model.param.observation.printDistribution();
+		setAdaptiveWeight();
+		if(adaptiveWeight == 1.0) {
+			model.updateFromCounts(expectedCounts);
+		} else {
+			model.updateFromCountsWeighted(expectedCounts, adaptiveWeight);
+		}
 	}
 
 	public void start() {

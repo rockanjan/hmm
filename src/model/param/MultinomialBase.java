@@ -63,6 +63,20 @@ public abstract class MultinomialBase {
 		return result;
 	}
 	
+	public void cloneWeightedFrom(MultinomialBase source, double weight) {
+		if(oldCount == null) {
+			oldCount = MyArray.getCloneOfMatrix(source.count);
+		}
+		for(int i=0; i<y; i++) {
+			for(int j=0; j<x; j++) {
+				//weighted expected counts
+				count[j][i] = weight * source.count[j][i] + (1-weight) * oldCount[j][i];
+			}
+		} 
+		//store the new expected counts for next iteration
+		oldCount = MyArray.getCloneOfMatrix(count);		
+	}
+	
 	/*
 	 * adds the counts from other multinomials
 	 */

@@ -37,6 +37,7 @@ public class Main {
 	/** user parameters end **/
 	public static void main(String[] args) throws IOException {
 		EM.sampleSentenceSize = Integer.MAX_VALUE;
+		EM.alpha = 1.0;
 		System.out.println("Number of threads : " + USE_THREAD_COUNT);
 		//defaults
 		outFolderPrefix = "out/";

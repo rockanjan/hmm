@@ -32,6 +32,13 @@ public abstract class HMMBase {
 		param.cloneFrom(counts);
 	}
 	
+	public void updateFromCountsWeighted(HMMParamBase counts, double weight) {
+		param.initial.cloneWeightedFrom(counts.initial, weight);
+		param.transition.cloneWeightedFrom(counts.transition, weight);
+		param.observation.cloneWeightedFrom(counts.transition, weight);
+		this.param.normalize();
+	}
+	
 	public String saveModel() {
 		return saveModel(-1);
 	}
