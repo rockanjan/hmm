@@ -21,38 +21,38 @@ public class Main {
 	/** user parameters **/
 	static String delimiter = "\\+";
 	static int numIter;
-	static long seed = 1;
-	
+	static long seed = 3;
+
 	static String trainFile;
 	static String vocabFile;
 	static String testFile;
 	static String devFile;
 	static String outFolderPrefix;
-	static int numStates; 	
+	static int numStates;
 	static int vocabThreshold = 3; //only above this included
 	static HMMBase model;
 	static Corpus corpus;
 	static HMMType modelType;
-	
+
 	/** user parameters end **/
 	public static void main(String[] args) throws IOException {
-		EM.sampleSentenceSize = Integer.MAX_VALUE;
-		EM.alpha = 1.0;
+		EM.sampleSentenceSize = 2000;
+		EM.alpha = 0.5;
 		System.out.println("Number of threads : " + USE_THREAD_COUNT);
 		//defaults
 		outFolderPrefix = "out/";
-		trainFile = "data/test.txt.SPL";
-		devFile = null;
-		testFile = null;
+		trainFile = "data/brown_train.txt";
+		devFile = "data/brown_dev.txt";
+		testFile = "data/brown_test.txt";
 		vocabFile = trainFile;
-		numStates = 200;
-		numIter = 50;
-		String outFileTrain = "out/decoded/test.txt.SPL.decoded";
+		numStates = 40;
+		numIter = 200;
+		String outFileTrain = "out/decoded/brown_train.txt.SPL.decoded";
 		String outFileDev = "out/decoded/brown_dev.txt.decoded";
 		String outFileTest = "out/decoded/bronw_test.txt.decoded";
 		//modelType = HMMType.LOG_SCALE;
 		modelType = HMMType.WITH_NO_FINAL_STATE;
-		
+
 		if(args.length > 0) {
 			try{
 				numStates = Integer.parseInt(args[0]);
@@ -64,12 +64,12 @@ public class Main {
 				System.out.println("<program> numStates numIter trainFile testFile vocabFile");
 				System.exit(-1);
 			}
-			
+
 		}
 		printParams();
 		corpus = new Corpus("\\s+", vocabThreshold);
-		
-		
+
+
 		//TRAIN
 		corpus.readVocab(vocabFile);
 		corpus.readTrain(trainFile);
@@ -81,7 +81,7 @@ public class Main {
 		corpus.saveVocabFile(outFolderPrefix + "/model/vocab.txt");
 		if(modelType == HMMType.WITH_NO_FINAL_STATE) {
 			System.out.println("HMM with no final state");
-			model = new HMMNoFinalState(numStates, corpus.corpusVocab.vocabSize);			
+			model = new HMMNoFinalState(numStates, corpus.corpusVocab.vocabSize);
 		} else if(modelType == HMMType.WITH_FINAL_STATE) {
 			System.out.println("HMM with final state");
 			System.out.println("NOT WORKING");
@@ -91,15 +91,15 @@ public class Main {
 			System.out.println("HMM Log scale");
 			model = new HMMNoFinalStateLog(numStates, corpus.corpusVocab.vocabSize);
 		}
-		
+
 		Random r = new Random(seed);
 		model.initializeRandom(r);
 		EM em = new EM(numIter, corpus, model);
 		//start training with EM
 		em.start();
 		model.saveModel();
-		
-		
+
+
 		/*
 		//TEST
 		corpus.readVocabFromDictionary("out/model/vocab.txt");
@@ -108,7 +108,7 @@ public class Main {
 		corpus.readDev(devFile);
 		if(modelType == HMMType.WITH_NO_FINAL_STATE) {
 			System.out.println("HMM with no final state");
-			model = new HMMNoFinalState(numStates, corpus.corpusVocab.vocabSize);			
+			model = new HMMNoFinalState(numStates, corpus.corpusVocab.vocabSize);
 		} else if(modelType == HMMType.WITH_FINAL_STATE) {
 			System.out.println("HMM with final state");
 			System.out.println("NOT WORKING");
@@ -117,7 +117,7 @@ public class Main {
 		} else if(modelType == HMMType.LOG_SCALE) {
 			System.out.println("HMM Log scale");
 			model = new HMMNoFinalStateLog(numStates, corpus.corpusVocab.vocabSize);
-		}		
+		}
 		model.loadModel("/home/anjan/workspace/HMM/out/model/model_final_states_100_brown.txt");
 		//EM em = new EM(numIter, corpus, model);
 		//start training with EM
@@ -128,7 +128,7 @@ public class Main {
 			testLL = testLL / corpus.testInstanceList.numberOfTokens;
 			double testPerplexity = Math.pow(2, -testLL/Math.log(2));
 			System.out.println("Test data LL = " + testLL + " perplexity = " + testPerplexity);
-			
+
 			test(model, corpus.testInstanceList, outFileTest);
 			//testMaxPosterior(model, corpus.testInstanceList, outFileTest + ".posterior");
 			//testPosteriorDistribution(model, corpus.testInstanceList, outFileTest + ".posterior_distribution");
@@ -144,9 +144,9 @@ public class Main {
 		test(model, corpus.trainInstanceList, outFileTrain);
 		//testMaxPosterior(model, corpus.trainInstanceList, outFileTrain + ".posterior");
 		//testPosteriorDistribution(model, corpus.testInstanceList, outFileTrain + ".posterior_distribution");
-		
+
 	}
-	
+
 	public static void testPosteriorDistribution(HMMBase model, InstanceList instanceList, String outFile) {
 		System.out.println("Decoding Posterior distribution");
 		Decoder decoder = new Decoder(model);
@@ -175,7 +175,7 @@ public class Main {
 		}
 		System.out.println("Finished decoding");
 	}
-	
+
 	public static void test(HMMBase model, InstanceList instanceList, String outFile) {
 		System.out.println("Decoding Data");
 		Decoder decoder = new Decoder(model);
@@ -199,7 +199,7 @@ public class Main {
 		}
 		System.out.println("Finished decoding");
 	}
-	
+
 	public static void testMaxPosterior(HMMBase model, InstanceList instanceList, String outFile) {
 		System.out.println("Decoding Data with Max Posterior");
 		Decoder decoder = new Decoder(model);
@@ -221,7 +221,7 @@ public class Main {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void printParams() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("Train file : " + trainFile);

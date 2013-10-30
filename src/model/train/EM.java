@@ -40,7 +40,7 @@ public class EM {
 	public static int sampleSentenceSize = Integer.MAX_VALUE;
 	public double adaptiveWeight = 1.0;
 	public double t0 = 2;
-	public static double alpha = 0.9;
+	public static double alpha = 1.0;
 	public Object updateLock = new Object();
 
 	public EM(int numIter, Corpus c, HMMBase model) {
@@ -53,7 +53,7 @@ public class EM {
 		//fraction of data
 		double f = 1.0 * c.randomTrainingSampleInstanceList.size() / c.trainInstanceList.size();
 		if(f == 1) {
-			System.out.println("fraction = 1, all dataset used");
+			//System.out.println("fraction = 1, all dataset used");
 			adaptiveWeight = 1.0;
 		} else {
 			//standard adaptiveWeight technique
@@ -79,7 +79,7 @@ public class EM {
 		}
 	}
 
-	public void eStepNoThread() {		
+	public void eStepNoThread() {
 		for (int n = 0; n < c.randomTrainingSampleInstanceList.size(); n++) {
 			Instance instance = c.randomTrainingSampleInstanceList.get(n);
 			instance.doInference(model);
@@ -159,6 +159,7 @@ public class EM {
 		if(adaptiveWeight == 1.0) {
 			model.updateFromCounts(expectedCounts);
 		} else {
+			//System.out.println("adaptive weight = " + adaptiveWeight);
 			model.updateFromCountsWeighted(expectedCounts, adaptiveWeight);
 		}
 	}
@@ -181,7 +182,7 @@ public class EM {
 			LL = LL / c.randomTrainingSampleInstanceList.numberOfTokens;
 			double trainPreplex = Math.pow(2, -LL/Math.log(2));
 			if (iterCount > 0) {
-				sb.append(String.format("LL %.6f Diff %.6f preplex %.2f \t Iter %d", LL,
+				sb.append(String.format("LL %.6f Diff %.6f perp %.2f \t Iter %d", LL,
 						(LL - bestOldLL), trainPreplex, iterCount));
 			}
 			if (LL > bestOldLL) {
@@ -194,14 +195,20 @@ public class EM {
 				LLDev = LLDev/c.devInstanceList.numberOfTokens;
 				double devPerplex = Math.pow(2, -LLDev/Math.log(2));
 				if (iterCount > 0) {
-					sb.append(String.format(" DevLL %.6f \t devDiff %.6f devPreplex %.2f",
+					sb.append(String.format(" devLL %.6f \t dD %.6f dP %.2f",
 							LLDev, (LLDev - bestOldLLDev), devPerplex));
 				}
 			}
+            if(c.testInstanceList != null && iterCount % 20 == 0) {
+			double testLL = c.testInstanceList.getLL(model);
+			testLL = testLL / c.testInstanceList.numberOfTokens;
+			double testPerplexity = Math.pow(2, -testLL/Math.log(2));
+			System.out.println("Test data LL = " + testLL + " perplexity = " + testPerplexity);
+		    }
 			if (isConverged()) {
 				break;
 			}
-			sb.append(String.format("\t Fixes: %d \t E-step time %s",
+			sb.append(String.format("\t Fix: %d \t time %s",
 					Stats.totalFixes, eStepTime.stop()));
 			System.out.println(sb.toString());
 		}
