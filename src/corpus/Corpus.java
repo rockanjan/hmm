@@ -1,10 +1,15 @@
 package corpus;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -30,7 +35,7 @@ public class Corpus {
 	}
 	
 	public void readDev(String inFile) throws IOException {
-		BufferedReader br = new BufferedReader(new FileReader(inFile));
+		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(inFile), "UTF8"));
 		String line = null;
 		int totalWords = 0;
 		int totalUnknown = 0;
@@ -57,7 +62,7 @@ public class Corpus {
 	}
 
 	public void readTest(String inFile) throws IOException {
-		BufferedReader br = new BufferedReader(new FileReader(inFile));
+		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(inFile), "UTF8"));
 		String line = null;
 		int totalWords = 0;
 		int totalUnknown = 0;
@@ -84,7 +89,7 @@ public class Corpus {
 	}
 
 	public void readTrain(String inFile) throws IOException {
-		BufferedReader br = new BufferedReader(new FileReader(inFile));
+		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(inFile), "UTF8"));
 		String line = null;
 		totalWords = 0;
 		int totalUnknown = 0;
@@ -140,10 +145,10 @@ public class Corpus {
 		}
 	}	
 
-	public void saveVocabFile(String filename) {
+	public void saveVocabFile(String filename) throws UnsupportedEncodingException {
 		PrintWriter dictionaryWriter;
 		try {
-			dictionaryWriter = new PrintWriter(filename);
+			dictionaryWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(filename), "UTF-8"));
 			int V = corpusVocab.vocabSize;
 			dictionaryWriter.println(V);
 			for (int v = 0; v < V; v++) {

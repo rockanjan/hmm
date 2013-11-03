@@ -1,9 +1,11 @@
 package corpus;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,24 +44,27 @@ public class Vocabulary {
 	}
 	
 	public void readVocabFromCorpus(Corpus c, String filename) throws IOException {
-		BufferedReader br = new BufferedReader(new FileReader(filename));
+		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "UTF8"));
 		String line = null;
 		wordToIndex.put(UNKNOWN, 0);
 		indexToFrequency.put(0, 0);
 		indexToWord.add(UNKNOWN);
 		index = 1; //indexToFrequency should start new index from 1
 		while( (line = br.readLine()) != null) {
+			//System.out.println(line);
 			line = line.trim();
 			if(! line.isEmpty()) {
 				String words[] = line.split(c.delimiter);
 				for(int i=0; i<words.length; i++) {
 					String word = words[i];
+					/*
 					if(lower) {
 						word = word.toLowerCase();
 					}
 					if(smooth) {
 						word = SmoothWord.smooth(word);
 					}
+					*/
 					int wordId = addItem(word);					
 				}
 			}

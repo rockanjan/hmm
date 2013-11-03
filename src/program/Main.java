@@ -1,7 +1,9 @@
 package program;
 
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Random;
 
@@ -17,7 +19,7 @@ import corpus.Instance;
 import corpus.InstanceList;
 
 public class Main {
-	public static int USE_THREAD_COUNT = 4;
+	public static int USE_THREAD_COUNT = 1;
 	/** user parameters **/
 	static String delimiter = "\\+";
 	static int numIter;
@@ -29,27 +31,27 @@ public class Main {
 	static String devFile;
 	static String outFolderPrefix;
 	static int numStates;
-	static int vocabThreshold = 3; //only above this included
+	static int vocabThreshold = 0; //only above this included
 	static HMMBase model;
 	static Corpus corpus;
 	static HMMType modelType;
 
 	/** user parameters end **/
 	public static void main(String[] args) throws IOException {
-		EM.sampleSentenceSize = 2000;
+		EM.sampleSentenceSize = Integer.MAX_VALUE;
 		EM.alpha = 0.5;
 		System.out.println("Number of threads : " + USE_THREAD_COUNT);
 		//defaults
 		outFolderPrefix = "out/";
-		trainFile = "data/brown_train.txt";
-		devFile = "data/brown_dev.txt";
-		testFile = "data/brown_test.txt";
+		trainFile = "data/corpus_clean_tokenized.txt";
+		//devFile = "data/brown_dev.txt";
+		//testFile = "data/brown_test.txt";
 		vocabFile = trainFile;
 		numStates = 40;
 		numIter = 200;
-		String outFileTrain = "out/decoded/brown_train.txt.SPL.decoded";
-		String outFileDev = "out/decoded/brown_dev.txt.decoded";
-		String outFileTest = "out/decoded/bronw_test.txt.decoded";
+		String outFileTrain = "out/decoded/corpus_clean_tokenized.decoded";
+		//String outFileDev = "out/decoded/brown_dev.txt.decoded";
+		String outFileTest = "";
 		//modelType = HMMType.LOG_SCALE;
 		modelType = HMMType.WITH_NO_FINAL_STATE;
 
@@ -151,7 +153,7 @@ public class Main {
 		System.out.println("Decoding Posterior distribution");
 		Decoder decoder = new Decoder(model);
 		try {
-			PrintWriter pw = new PrintWriter(new FileWriter(outFile));
+			PrintWriter pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(outFile), "UTF-8"));
 			for(int n=0; n<instanceList.size(); n++) {
 				Instance instance = instanceList.get(n);
 				double[][] decoded = decoder.posteriorDistribution(instance);
@@ -180,7 +182,7 @@ public class Main {
 		System.out.println("Decoding Data");
 		Decoder decoder = new Decoder(model);
 		try {
-			PrintWriter pw = new PrintWriter(new FileWriter(outFile));
+			PrintWriter pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(outFile), "UTF-8"));
 			for(int n=0; n<instanceList.size(); n++) {
 				Instance instance = instanceList.get(n);
 				int[] decoded = decoder.viterbi(instance);
@@ -204,7 +206,7 @@ public class Main {
 		System.out.println("Decoding Data with Max Posterior");
 		Decoder decoder = new Decoder(model);
 		try{
-			PrintWriter pw = new PrintWriter(new FileWriter(outFile));
+			PrintWriter pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(outFile), "UTF-8"));
 			for(int n=0; n<instanceList.size(); n++) {
 				Instance instance = instanceList.get(n);
 				int[] decoded = decoder.posterior(instance);
