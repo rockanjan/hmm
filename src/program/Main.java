@@ -5,7 +5,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.Random;
+
+import config.Config;
 
 import model.HMMBase;
 import model.HMMFinalState;
@@ -22,39 +25,29 @@ public class Main {
 	public static int USE_THREAD_COUNT = 1;
 	/** user parameters **/
 	static String delimiter = "\\+";
-	static int numIter;
-	static long seed = 3;
-
-	static String trainFile;
-	static String vocabFile;
-	static String testFile;
-	static String devFile;
-	static String outFolderPrefix;
-	static int numStates;
-	static int vocabThreshold = 0; //only above this included
+	public static int numIter;
+	public static long seed = 3;
+	public static Random random = new Random(seed);
+	public static String trainFile;
+	public static String vocabFile;
+	public static String testFile;
+	public static String devFile;
+	
+	public static String outFileTrain;
+	public static String outFileTest;
+	public static String outFileDev;
+	
+	public static String outFolderPrefix;
+	public static int numStates;
+	public static int vocabThreshold = 3; //only above this included
 	static HMMBase model;
 	static Corpus corpus;
 	static HMMType modelType;
 
 	/** user parameters end **/
 	public static void main(String[] args) throws IOException {
-		EM.sampleSentenceSize = Integer.MAX_VALUE;
-		EM.alpha = 0.5;
-		System.out.println("Number of threads : " + USE_THREAD_COUNT);
-		//defaults
-		outFolderPrefix = "out/";
-		trainFile = "data/corpus_clean_tokenized.txt";
-		//devFile = "data/brown_dev.txt";
-		//testFile = "data/brown_test.txt";
-		vocabFile = trainFile;
-		numStates = 40;
-		numIter = 200;
-		String outFileTrain = "out/decoded/corpus_clean_tokenized.decoded";
-		//String outFileDev = "out/decoded/brown_dev.txt.decoded";
-		String outFileTest = "";
-		//modelType = HMMType.LOG_SCALE;
+		Config.setup();
 		modelType = HMMType.WITH_NO_FINAL_STATE;
-
 		if(args.length > 0) {
 			try{
 				numStates = Integer.parseInt(args[0]);
@@ -69,9 +62,13 @@ public class Main {
 
 		}
 		printParams();
+		//trainNew();
+		trainContinue(200);
+		testAll();
+	}
+	
+	public static void trainNew() throws IOException {
 		corpus = new Corpus("\\s+", vocabThreshold);
-
-
 		//TRAIN
 		corpus.readVocab(vocabFile);
 		corpus.readTrain(trainFile);
@@ -93,17 +90,15 @@ public class Main {
 			System.out.println("HMM Log scale");
 			model = new HMMNoFinalStateLog(numStates, corpus.corpusVocab.vocabSize);
 		}
-
-		Random r = new Random(seed);
-		model.initializeRandom(r);
+		model.initializeRandom(random);
 		EM em = new EM(numIter, corpus, model);
 		//start training with EM
 		em.start();
 		model.saveModel();
-
-
-		/*
-		//TEST
+	}
+	
+	public static void trainContinue(int iter) throws IOException {
+		corpus = new Corpus("\\s+", vocabThreshold);
 		corpus.readVocabFromDictionary("out/model/vocab.txt");
 		corpus.readTrain(trainFile);
 		corpus.readTest(testFile);
@@ -120,11 +115,13 @@ public class Main {
 			System.out.println("HMM Log scale");
 			model = new HMMNoFinalStateLog(numStates, corpus.corpusVocab.vocabSize);
 		}
-		model.loadModel("/home/anjan/workspace/HMM/out/model/model_final_states_100_brown.txt");
-		//EM em = new EM(numIter, corpus, model);
-		//start training with EM
-		//em.start();
-		*/
+		model.loadModel("/home/anjan/workspace/HMM/out/model/model_iter_" + iter + "_states_" + numStates + ".txt");
+		EM em = new EM(numIter, corpus, model);
+		em.start();
+		model.saveModel();
+	}
+	
+	public static void testAll() {
 		if(corpus.testInstanceList != null) {
 			double testLL = corpus.testInstanceList.getLL(model);
 			testLL = testLL / corpus.testInstanceList.numberOfTokens;
@@ -135,18 +132,17 @@ public class Main {
 			//testMaxPosterior(model, corpus.testInstanceList, outFileTest + ".posterior");
 			//testPosteriorDistribution(model, corpus.testInstanceList, outFileTest + ".posterior_distribution");
 		}
-		/*
+		
 		if(corpus.devInstanceList != null) {
 			System.out.println("Dev data LL = " + corpus.devInstanceList.getLL(model));
 			test(model, corpus.devInstanceList, outFileDev);
-			testMaxPosterior(model, corpus.testInstanceList, outFileDev + ".posterior");
+			//testMaxPosterior(model, corpus.testInstanceList, outFileDev + ".posterior");
 			//testPosteriorDistribution(model, corpus.testInstanceList, outFileDev + ".posterior_distribution");
 		}
-		*/
+		
 		test(model, corpus.trainInstanceList, outFileTrain);
 		//testMaxPosterior(model, corpus.trainInstanceList, outFileTrain + ".posterior");
 		//testPosteriorDistribution(model, corpus.testInstanceList, outFileTrain + ".posterior_distribution");
-
 	}
 
 	public static void testPosteriorDistribution(HMMBase model, InstanceList instanceList, String outFile) {
@@ -233,6 +229,7 @@ public class Main {
 		sb.append("\noutFolderPrefix : " + outFolderPrefix);
 		sb.append("\nIterations : " + numIter);
 		sb.append("\nNumStates : " + numStates);
+		sb.append("\nvocab thres : " + vocabThreshold);
 		System.out.println(sb.toString());
 	}
 }

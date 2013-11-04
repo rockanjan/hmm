@@ -14,20 +14,26 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
+import program.Main;
+
+import model.train.EM;
+
 public class Corpus {
 	public String delimiter;
 	public InstanceList trainInstanceList = new InstanceList();
+	public InstanceList trainInstanceListRandomized;
 	// testInstanceList can be empty
 	public InstanceList testInstanceList;
 	public InstanceList devInstanceList;
 	public InstanceList randomTrainingSampleInstanceList;
-	Random random = new Random(1);
 
 	public Vocabulary corpusVocab;
 
 	int vocabThreshold;
 	
 	public int totalWords; 
+	
+	public static boolean sampleSequential = true;
 
 	public Corpus(String delimiter, int vocabThreshold) {
 		this.delimiter = delimiter;
@@ -121,30 +127,58 @@ public class Corpus {
 		corpusVocab.readVocabFromCorpus(this, inFile);
 	}
 
-	public void readVocabFromDictionary(String filename) {
+	public void readVocabFromDictionary(String filename) throws UnsupportedEncodingException {
 		corpusVocab = new Vocabulary();
 		corpusVocab.readVocabFromDictionary(filename);
 	}
 	
-	public void generateRandomTrainingSample(int size) {
+	public void generateRandomTrainingSample(int size, int iterCount) {
 		randomTrainingSampleInstanceList = new InstanceList();
 		if(trainInstanceList.size() <= size) {
 			randomTrainingSampleInstanceList.addAll(trainInstanceList);
 			randomTrainingSampleInstanceList.numberOfTokens = trainInstanceList.numberOfTokens;
 		} else {
-			ArrayList<Integer> randomInts = new ArrayList<Integer>();			
-			for(int i=0; i<trainInstanceList.size(); i++) {
-				randomInts.add(i);
+			if(sampleSequential) { //sequentially
+				randomTrainingSampleInstanceList = new InstanceList();
+				if(trainInstanceListRandomized == null) {
+					trainInstanceListRandomized = new InstanceList();
+					ArrayList<Integer> randomInts = new ArrayList<Integer>();			
+					for(int i=0; i<trainInstanceList.size(); i++) {
+						randomInts.add(i);
+					}
+					Collections.shuffle(randomInts,Main.random);
+					for(int i=0; i<trainInstanceList.size(); i++) {
+						Instance instance = trainInstanceList.get(randomInts.get(i));
+						trainInstanceListRandomized.add(instance);
+						trainInstanceListRandomized.numberOfTokens += instance.T;
+					}					
+				}
+				int startIndex = (iterCount * EM.sampleSentenceSize) % trainInstanceListRandomized.size();
+				int index = startIndex;
+				for(int i=0; i<size; i++) {
+					Instance instance = trainInstanceListRandomized.get(index);
+					randomTrainingSampleInstanceList.add(instance);
+					randomTrainingSampleInstanceList.numberOfTokens += instance.T;
+					index++;
+					//index can get higher than the size of the training corpus
+					index = index % trainInstanceListRandomized.size();
+				}
+			} else { //randomly
+				ArrayList<Integer> randomInts = new ArrayList<Integer>();			
+				for(int i=0; i<trainInstanceList.size(); i++) {
+					randomInts.add(i);
+				}
+				Collections.shuffle(randomInts,Main.random);
+				for(int i=0; i<size; i++) {
+					Instance instance = trainInstanceList.get(randomInts.get(i));
+					randomTrainingSampleInstanceList.add(instance);				
+					randomTrainingSampleInstanceList.numberOfTokens += instance.T;
+				}
 			}
-			Collections.shuffle(randomInts,random);
-			for(int i=0; i<size; i++) {
-				Instance instance = trainInstanceList.get(randomInts.get(i));
-				randomTrainingSampleInstanceList.add(instance);				
-				randomTrainingSampleInstanceList.numberOfTokens += instance.T;
-			}			
-		}
-	}	
-
+		}				
+	}
+	
+	
 	public void saveVocabFile(String filename) throws UnsupportedEncodingException {
 		PrintWriter dictionaryWriter;
 		try {

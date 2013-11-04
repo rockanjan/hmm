@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -109,10 +110,10 @@ public class Vocabulary {
 	}
 	
 	//reads from the dictionary
-	public void readVocabFromDictionary(String filename) {
+	public void readVocabFromDictionary(String filename) throws UnsupportedEncodingException {
 		BufferedReader br = null;
 		try {
-			br = new BufferedReader(new FileReader(filename));
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "UTF8"));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			System.exit(-1);

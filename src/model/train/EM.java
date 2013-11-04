@@ -35,7 +35,7 @@ public class EM {
 
 	int lowerCount = 0; // number of times LL could not increase from previous
 						// best
-	int iterCount = 0;
+	public int iterCount = 0;
 
 	public static int sampleSentenceSize = Integer.MAX_VALUE;
 	public double adaptiveWeight = 1.0;
@@ -63,7 +63,7 @@ public class EM {
 	}
 	
 	public void eStep() {
-		c.generateRandomTrainingSample(sampleSentenceSize);
+		c.generateRandomTrainingSample(sampleSentenceSize, iterCount);
 		if (model.hmmType == HMMType.WITH_NO_FINAL_STATE) {
 			expectedCounts = new HMMParamNoFinalState(model);
 		} else if (model.hmmType == HMMType.WITH_FINAL_STATE) {
