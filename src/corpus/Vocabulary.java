@@ -14,7 +14,7 @@ import java.util.Map;
 import util.SmoothWord;
 
 public class Vocabulary {
-	boolean debug = false;
+	boolean debug = true;
 	boolean smooth = true;
 	boolean lower = true;
 	public int vocabThreshold = 1;
@@ -58,14 +58,13 @@ public class Vocabulary {
 				String words[] = line.split(c.delimiter);
 				for(int i=0; i<words.length; i++) {
 					String word = words[i];
-					/*
 					if(lower) {
 						word = word.toLowerCase();
 					}
 					if(smooth) {
 						word = SmoothWord.smooth(word);
 					}
-					*/
+					
 					int wordId = addItem(word);					
 				}
 			}

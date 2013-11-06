@@ -1,6 +1,9 @@
 package corpus;
 
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.List;
 
 import util.SmoothWord;
 
@@ -20,6 +23,7 @@ public class Instance {
 	public ForwardBackward forwardBackward;
 	public int nrStates;
 	public int unknownCount;
+	public List<String> unknownList = new ArrayList<String>();
 	
 	public Instance(Corpus c, String line) {
 		this.c = c;
@@ -54,21 +58,22 @@ public class Instance {
 		String splitted[] = line.split("(\\s+|\\t+)");
 		ArrayList<Integer> tempWordArray = new ArrayList<Integer>();
 		for(int i=0; i<splitted.length; i++) {
-			String word = splitted[i];
-			if(c.corpusVocab.lower) {
-				word = word.toLowerCase();
-			}
-			if(c.corpusVocab.smooth) {
-				word = SmoothWord.smooth(word);
-			}
-			int index = c.corpusVocab.getIndex(word);
-			if(index >= 0) {
-				if(index == 0) {
-					unknownCount += 1;
+				String word = splitted[i];
+				if(c.corpusVocab.lower) {
+					word = word.toLowerCase();
 				}
-				tempWordArray.add(index);
+				if(c.corpusVocab.smooth) {
+					word = SmoothWord.smooth(word);
+				}
+				int index = c.corpusVocab.getIndex(word);
+				if(index >= 0) {
+					if(index == 0) {
+						unknownCount += 1;
+						unknownList.add(word);
+					}
+					tempWordArray.add(index);
+				}
 			}
-		}
 		T = tempWordArray.size();
 		words = new int[T];
 		for(int i=0; i<T; i++) {

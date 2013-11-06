@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -50,6 +51,7 @@ public class Corpus {
 			line = line.trim();
 			if (!line.isEmpty()) {
 				Instance instance = new Instance(this, line);
+				instance.unknownList = null;
 				totalUnknown += instance.unknownCount;
 				if (instance.words.length != 0) {
 					devInstanceList.add(instance);
@@ -78,6 +80,17 @@ public class Corpus {
 			if (!line.isEmpty()) {
 				Instance instance = new Instance(this, line);
 				totalUnknown += instance.unknownCount;
+				try{
+					PrintWriter pw = new PrintWriter(new FileWriter("unknown_test_words.txt", true));					
+					for(String w : instance.unknownList) {
+						pw.println(w);
+					}
+					instance.unknownList.clear();
+					instance.unknownList = null;
+					pw.close();
+				} catch(Exception e) {
+					System.err.println("error writing unknown test word");
+				}
 				if (instance.words.length != 0) {
 					testInstanceList.add(instance);
 					totalWords += instance.words.length;
@@ -103,6 +116,7 @@ public class Corpus {
 			line = line.trim();
 			if (!line.isEmpty()) {
 				Instance instance = new Instance(this, line);
+				instance.unknownList = null;
 				totalUnknown += instance.unknownCount;
 				if (instance.words.length != 0) {
 					trainInstanceList.add(instance);

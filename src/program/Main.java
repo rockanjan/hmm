@@ -1,5 +1,6 @@
 package program;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -39,7 +40,7 @@ public class Main {
 	
 	public static String outFolderPrefix;
 	public static int numStates;
-	public static int vocabThreshold = 3; //only above this included
+	public static int vocabThreshold; //only above this included
 	static HMMBase model;
 	static Corpus corpus;
 	static HMMType modelType;
@@ -47,6 +48,10 @@ public class Main {
 	/** user parameters end **/
 	public static void main(String[] args) throws IOException {
 		Config.setup();
+		File unknownTestWord = new File("unknown_test_words.txt");
+		if(unknownTestWord.exists()) {
+			unknownTestWord.delete();
+		}
 		modelType = HMMType.WITH_NO_FINAL_STATE;
 		if(args.length > 0) {
 			try{
@@ -62,8 +67,8 @@ public class Main {
 
 		}
 		printParams();
-		//trainNew();
-		trainContinue(200);
+		trainNew();
+		//trainContinue(200); //-1 for final model
 		testAll();
 	}
 	
@@ -78,6 +83,8 @@ public class Main {
 			corpus.readDev(devFile);
 		//save vocab file
 		corpus.saveVocabFile(outFolderPrefix + "/model/vocab.txt");
+		writeSmoothedCorpus("brown-smoothed.txt");
+		System.exit(-1);
 		if(modelType == HMMType.WITH_NO_FINAL_STATE) {
 			System.out.println("HMM with no final state");
 			model = new HMMNoFinalState(numStates, corpus.corpusVocab.vocabSize);
@@ -101,8 +108,12 @@ public class Main {
 		corpus = new Corpus("\\s+", vocabThreshold);
 		corpus.readVocabFromDictionary("out/model/vocab.txt");
 		corpus.readTrain(trainFile);
-		corpus.readTest(testFile);
-		corpus.readDev(devFile);
+		if(testFile != null)
+			corpus.readTest(testFile);
+		if(devFile != null)
+			corpus.readDev(devFile);
+		//writeSmoothedCorpus("combined-smoothed.txt");
+		//System.exit(-1);
 		if(modelType == HMMType.WITH_NO_FINAL_STATE) {
 			System.out.println("HMM with no final state");
 			model = new HMMNoFinalState(numStates, corpus.corpusVocab.vocabSize);
@@ -115,10 +126,38 @@ public class Main {
 			System.out.println("HMM Log scale");
 			model = new HMMNoFinalStateLog(numStates, corpus.corpusVocab.vocabSize);
 		}
-		model.loadModel("/home/anjan/workspace/HMM/out/model/model_iter_" + iter + "_states_" + numStates + ".txt");
+		if(iter < 0) {
+			model.loadModel("/home/anjan/workspace/HMM/out/model/model_final" + "_states_" + numStates + ".txt");
+		} else {
+			model.loadModel("/home/anjan/workspace/HMM/out/model/model_iter_" + iter + "_states_" + numStates + ".txt");
+		}
+		/*
 		EM em = new EM(numIter, corpus, model);
 		em.start();
 		model.saveModel();
+		*/
+		
+	}
+	
+	public static void writeSmoothedCorpus(String outFile) {
+		InstanceList instanceList = corpus.trainInstanceList;
+		try {
+			PrintWriter pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(outFile), "UTF-8"));
+			for(int n=0; n<instanceList.size(); n++) {
+				Instance instance = instanceList.get(n);
+				for(int t=0; t<instance.T; t++) {
+					String word = instance.getWord(t);
+					pw.print(word + " ");
+				}
+				pw.println();
+			}
+			pw.close();
+		}
+		catch (IOException e) {
+			System.err.format("Could not open file for writing %s\n", outFile);
+			e.printStackTrace();
+		}
+		System.out.println("Finished writing smoothed corpus");
 	}
 	
 	public static void testAll() {
