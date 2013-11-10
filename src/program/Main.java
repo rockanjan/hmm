@@ -68,7 +68,7 @@ public class Main {
 		}
 		printParams();
 		trainNew();
-		//trainContinue(200); //-1 for final model
+		//trainContinue(50); //-1 for final model
 		testAll();
 	}
 	
@@ -83,8 +83,8 @@ public class Main {
 			corpus.readDev(devFile);
 		//save vocab file
 		corpus.saveVocabFile(outFolderPrefix + "/model/vocab.txt");
-		writeSmoothedCorpus("brown-smoothed.txt");
-		System.exit(-1);
+		//writeSmoothedCorpus("brown-smoothed.txt");
+		//System.exit(-1);
 		if(modelType == HMMType.WITH_NO_FINAL_STATE) {
 			System.out.println("HMM with no final state");
 			model = new HMMNoFinalState(numStates, corpus.corpusVocab.vocabSize);
@@ -131,11 +131,11 @@ public class Main {
 		} else {
 			model.loadModel("/home/anjan/workspace/HMM/out/model/model_iter_" + iter + "_states_" + numStates + ".txt");
 		}
-		/*
+		
 		EM em = new EM(numIter, corpus, model);
 		em.start();
 		model.saveModel();
-		*/
+		
 		
 	}
 	
@@ -179,7 +179,7 @@ public class Main {
 			//testPosteriorDistribution(model, corpus.testInstanceList, outFileDev + ".posterior_distribution");
 		}
 		
-		test(model, corpus.trainInstanceList, outFileTrain);
+		//test(model, corpus.trainInstanceList, outFileTrain);
 		//testMaxPosterior(model, corpus.trainInstanceList, outFileTrain + ".posterior");
 		//testPosteriorDistribution(model, corpus.testInstanceList, outFileTrain + ".posterior_distribution");
 	}

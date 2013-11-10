@@ -211,6 +211,9 @@ public class EM {
 			sb.append(String.format("\t Fix: %d \t time %s",
 					Stats.totalFixes, eStepTime.stop()));
 			System.out.println(sb.toString());
+			if(iterCount % 50 == 0) {
+				model.saveModel(iterCount);
+			}
 		}
 		System.out.println("Total EM Time : " + totalEMTime.stop());
 	}

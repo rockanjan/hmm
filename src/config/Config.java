@@ -6,25 +6,25 @@ import model.train.EM;
 
 public class Config {
 	public static void setup() {
-		Main.numIter = 201;
-		Main.numStates = 100;
+		Main.numIter = 300;
+		Main.numStates = 50;
 		Main.vocabThreshold = 3; //only above this included
 		
-		String trainFilename = "brown_train.txt";
-		String devFilename = "brown_dev.txt";
-		String testFilename = "brown_test.txt";
+		String trainFilename = "nepali_train.txt";
+		String devFilename = "nepali_dev.txt";
+		String testFilename = "nepali_test.txt";
 		Main.USE_THREAD_COUNT = 2;
-		EM.sampleSentenceSize = Integer.MAX_VALUE;
-		//EM.sampleSentenceSize = 2000;
+		//EM.sampleSentenceSize = Integer.MAX_VALUE;
+		EM.sampleSentenceSize = 50000;
 		Corpus.sampleSequential = true;
 		EM.alpha = 0.5;
 		
 		Main.seed = 1;
 		String decodeFolder = "out/decoded/";
-		String dataFolder = "data/";
+		String dataFolder = "data/nepali/";
 		
 		Main.trainFile = dataFolder + trainFilename;
-		//Main.devFile = dataFolder + devFilename;
+		Main.devFile = dataFolder + devFilename;
 		Main.testFile = dataFolder + testFilename;
 		
 		Main.outFolderPrefix = "out/";
