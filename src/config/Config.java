@@ -6,7 +6,7 @@ import model.train.EM;
 
 public class Config {
 	public static void setup() {
-		Main.numIter = 300;
+		Main.numIter = 500;
 		Main.numStates = 50;
 		Main.vocabThreshold = 3; //only above this included
 		
@@ -15,7 +15,7 @@ public class Config {
 		String testFilename = "nepali_test.txt";
 		Main.USE_THREAD_COUNT = 2;
 		//EM.sampleSentenceSize = Integer.MAX_VALUE;
-		EM.sampleSentenceSize = 50000;
+		EM.sampleSentenceSize = 100000;
 		Corpus.sampleSequential = true;
 		EM.alpha = 0.5;
 		

@@ -68,7 +68,7 @@ public class Main {
 		}
 		printParams();
 		trainNew();
-		//trainContinue(50); //-1 for final model
+		//trainContinue(100); //-1 for final model
 		testAll();
 	}
 	

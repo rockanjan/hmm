@@ -28,8 +28,8 @@ public class EM {
 	double LLDev = 0;
 
 	// convergence criteria
-	double precision = 1e-6;
-	int maxConsecutiveDecreaseLimit = 10;
+	double precision = 1e-8;
+	int maxConsecutiveDecreaseLimit = 50;
 
 	HMMParamBase expectedCounts;
 
@@ -213,6 +213,9 @@ public class EM {
 			System.out.println(sb.toString());
 			if(iterCount % 50 == 0) {
 				model.saveModel(iterCount);
+			}
+			if(iterCount == 300) {
+				EM.sampleSentenceSize = Integer.MAX_VALUE;
 			}
 		}
 		System.out.println("Total EM Time : " + totalEMTime.stop());

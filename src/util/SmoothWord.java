@@ -27,6 +27,10 @@ public class SmoothWord {
 																// etc
 
 	public static String smooth(String word) {
+		//for nepali numbers: convert them to english
+		for(int i = 0; i <= 9; i++) {
+			  word = word.replace("" + (char)(0x966+i), "" + i);
+		}
 		Matcher m1 = p1.matcher(word);
 		Matcher m2 = p2.matcher(word);
 		Matcher m3 = p3.matcher(word);
@@ -45,4 +49,5 @@ public class SmoothWord {
 				+ "(^-{0,1}[0-9]*\\.*[0-9]+)|" + "(^-{0,1}[0-9]+\\.*[0-9]*)+",
 				NUM); // for something like 10-years-old, 2-for-3 etc
 		return word;
-	}}
+	}
+}
