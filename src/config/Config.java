@@ -15,11 +15,11 @@ public class Config {
 		String testFilename = "nepali_test.txt";
 		Main.USE_THREAD_COUNT = 2;
 		//EM.sampleSentenceSize = Integer.MAX_VALUE;
-		EM.sampleSentenceSize = 100000;
+		EM.sampleSentenceSize = 10000;
 		Corpus.sampleSequential = true;
 		EM.alpha = 0.5;
 		
-		Main.seed = 1;
+		Main.seed = 2;
 		String decodeFolder = "out/decoded/";
 		String dataFolder = "data/nepali/";
 		
@@ -30,7 +30,7 @@ public class Config {
 		Main.outFolderPrefix = "out/";
 		Main.vocabFile = Main.trainFile;
 		Main.outFileTrain = decodeFolder + trainFilename + ".decoded";
-		//Main.outFileDev = decodeFolder + devFilename + ".decoded";
+		Main.outFileDev = decodeFolder + devFilename + ".decoded";
 		Main.outFileTest = decodeFolder + testFilename + ".decoded";
 		System.out.println("Number of threads : " + Main.USE_THREAD_COUNT);
 	}

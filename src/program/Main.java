@@ -68,7 +68,7 @@ public class Main {
 		}
 		printParams();
 		trainNew();
-		//trainContinue(100); //-1 for final model
+		//trainContinue(450); //-1 for final model
 		testAll();
 	}
 	
@@ -179,7 +179,7 @@ public class Main {
 			//testPosteriorDistribution(model, corpus.testInstanceList, outFileDev + ".posterior_distribution");
 		}
 		
-		//test(model, corpus.trainInstanceList, outFileTrain);
+		test(model, corpus.trainInstanceList, outFileTrain);
 		//testMaxPosterior(model, corpus.trainInstanceList, outFileTrain + ".posterior");
 		//testPosteriorDistribution(model, corpus.testInstanceList, outFileTrain + ".posterior_distribution");
 	}
