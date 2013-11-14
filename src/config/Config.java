@@ -19,7 +19,7 @@ public class Config {
 		Corpus.sampleSequential = true;
 		EM.alpha = 0.5;
 		
-		Main.seed = 2;
+		Main.seed = 1;
 		String decodeFolder = "out/decoded/";
 		String dataFolder = "data/nepali/";
 		

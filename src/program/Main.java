@@ -68,7 +68,7 @@ public class Main {
 		}
 		printParams();
 		trainNew();
-		//trainContinue(450); //-1 for final model
+		//trainContinue(-1); //-1 for final model
 		testAll();
 	}
 	
@@ -83,7 +83,7 @@ public class Main {
 			corpus.readDev(devFile);
 		//save vocab file
 		corpus.saveVocabFile(outFolderPrefix + "/model/vocab.txt");
-		//writeSmoothedCorpus("brown-smoothed.txt");
+		//writeSmoothedCorpus("nepali_smoothed_train.txt");
 		//System.exit(-1);
 		if(modelType == HMMType.WITH_NO_FINAL_STATE) {
 			System.out.println("HMM with no final state");

@@ -81,7 +81,8 @@ public class Corpus {
 				Instance instance = new Instance(this, line);
 				totalUnknown += instance.unknownCount;
 				try{
-					PrintWriter pw = new PrintWriter(new FileWriter("unknown_test_words.txt", true));					
+					PrintWriter pw = new PrintWriter(
+							new OutputStreamWriter(new FileOutputStream("unknown_test_words.txt", true), "UTF-8"));
 					for(String w : instance.unknownList) {
 						pw.println(w);
 					}

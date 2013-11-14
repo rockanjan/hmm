@@ -214,8 +214,8 @@ public class EM {
 			if(iterCount % 50 == 0) {
 				model.saveModel(iterCount);
 			}
-			if(iterCount == 300) {
-				EM.sampleSentenceSize = Integer.MAX_VALUE;
+			if(iterCount % 100 == 0) {
+				EM.sampleSentenceSize += 10000;
 			}
 		}
 		System.out.println("Total EM Time : " + totalEMTime.stop());
