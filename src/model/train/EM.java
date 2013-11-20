@@ -180,6 +180,7 @@ public class EM {
 			// sampleSentenceSize += 1000;
 			StringBuffer sb = new StringBuffer();
 			LL = LL / c.randomTrainingSampleInstanceList.numberOfTokens;
+			
 			double trainPreplex = Math.pow(2, -LL/Math.log(2));
 			if (iterCount > 0) {
 				sb.append(String.format("LL %.6f Diff %.6f perp %.2f \t Iter %d", LL,
@@ -214,7 +215,7 @@ public class EM {
 			if(iterCount % 50 == 0) {
 				model.saveModel(iterCount);
 			}
-			if(iterCount % 100 == 0) {
+			if(EM.sampleSentenceSize != Integer.MAX_VALUE && iterCount % 100 == 0) {
 				EM.sampleSentenceSize += 10000;
 			}
 		}
