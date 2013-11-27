@@ -1,23 +1,18 @@
 package corpus;
 
-import java.io.FileWriter;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-
-import util.SmoothWord;
 
 import model.HMMBase;
 import model.HMMType;
 import model.inference.ForwardBackward;
 import model.inference.ForwardBackwardLog;
-import model.inference.ForwardBackwardNoScaling;
 import model.inference.ForwardBackwardScaled;
-import model.param.HMMParamBase;
-import model.param.MultinomialRegular;
+import util.SmoothWord;
 
 public class Instance {
 	public int[] words;
+	public int[] decodedStates; //used by decoding
 	public int T; //sentence length
 	Corpus c;	
 	public ForwardBackward forwardBackward;

@@ -2,14 +2,12 @@ package program;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
-
-import config.Config;
 
 import model.HMMBase;
 import model.HMMFinalState;
@@ -18,6 +16,7 @@ import model.HMMNoFinalStateLog;
 import model.HMMType;
 import model.inference.Decoder;
 import model.train.EM;
+import config.Config;
 import corpus.Corpus;
 import corpus.Instance;
 import corpus.InstanceList;
@@ -48,6 +47,14 @@ public class Main {
 	/** user parameters end **/
 	public static void main(String[] args) throws IOException {
 		Config.setup();
+		if(Config.devFilename != null && !Config.devFilename.isEmpty()) {
+			Main.outFileDev = Config.decodeFolder + Config.devFilename + ".decoded";
+			devFile = Config.dataFolder + Config.devFilename;
+		}
+		if(Config.testFilename != null && !Config.testFilename.isEmpty()) {
+			Main.outFileTest = Config.decodeFolder + Config.testFilename + ".decoded";
+			testFile = Config.dataFolder + Config.testFilename;
+		}
 		File unknownTestWord = new File("unknown_test_words.txt");
 		if(unknownTestWord.exists()) {
 			unknownTestWord.delete();
@@ -67,8 +74,8 @@ public class Main {
 
 		}
 		printParams();
-		trainNew();
-		//trainContinue(-1); //-1 for final model
+		//trainNew();
+		trainContinue(5); //-1 for final model
 		testAll();
 	}
 	
@@ -131,11 +138,11 @@ public class Main {
 		} else {
 			model.loadModel("/home/anjan/workspace/HMM/out/model/model_iter_" + iter + "_states_" + numStates + ".txt");
 		}
-		
+		/*
 		EM em = new EM(numIter, corpus, model);
 		em.start();
 		model.saveModel();
-		
+		*/
 		
 	}
 	
@@ -212,18 +219,71 @@ public class Main {
 		}
 		System.out.println("Finished decoding");
 	}
+	
+	private static class DecoderWorker extends Thread {
+		final int startIndex;
+		final int endIndex;
+		final InstanceList instanceList;
+		final Decoder decoder;
+		public DecoderWorker(int startIndex, int endIndex, InstanceList instanceList, Decoder decoder) {
+			this.startIndex = startIndex;
+			this.endIndex = endIndex;
+			this.instanceList = instanceList;
+			this.decoder = decoder;
+		}
+
+		@Override
+		public void run() {
+			for (int n = startIndex; n < endIndex; n++) {
+				Instance instance = instanceList.get(n);
+				instance.decodedStates = decoder.viterbi(instance);
+			}
+		}
+	}
 
 	public static void test(HMMBase model, InstanceList instanceList, String outFile) {
 		System.out.println("Decoding Data");
 		Decoder decoder = new Decoder(model);
+		if(USE_THREAD_COUNT <=1) {
+			for(int n=0; n<instanceList.size(); n++) {
+				Instance instance = instanceList.get(n);
+				instance.decodedStates = decoder.viterbi(instance);
+			}
+		} else { //multithread
+			int divideSize = instanceList.size()
+					/ Main.USE_THREAD_COUNT;
+			List<DecoderWorker> threadList = new ArrayList<DecoderWorker>();
+			int startIndex = 0;
+			int endIndex = divideSize;
+			for (int i = 0; i < Main.USE_THREAD_COUNT; i++) {
+				DecoderWorker worker = new DecoderWorker(startIndex, endIndex, instanceList, decoder);
+				threadList.add(worker);
+				worker.start();
+				startIndex = endIndex;
+				endIndex = endIndex + divideSize;
+			}
+			// there might be few remainders
+			DecoderWorker finalWorker = new DecoderWorker(startIndex, instanceList.size(), instanceList, decoder);
+			finalWorker.start();
+			threadList.add(finalWorker);
+			// wait for the threads to complete
+			for (DecoderWorker worker : threadList) {
+				try {
+					worker.join();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}				
+			}
+		}
+		System.out.println("done with decoding... writing to file");
+		//start writing
 		try {
 			PrintWriter pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(outFile), "UTF-8"));
 			for(int n=0; n<instanceList.size(); n++) {
 				Instance instance = instanceList.get(n);
-				int[] decoded = decoder.viterbi(instance);
-				for(int t=0; t<decoded.length; t++) {
+				for(int t=0; t<instance.T; t++) {
 					String word = instance.getWord(t);
-					int state = decoded[t];
+					int state = instance.decodedStates[t];
 					pw.println(state + "\t" + word);
 				}
 				pw.println();
@@ -234,7 +294,7 @@ public class Main {
 			System.err.format("Could not open file for writing %s\n", outFile);
 			e.printStackTrace();
 		}
-		System.out.println("Finished decoding");
+		System.out.println("finished writing to file!");
 	}
 
 	public static void testMaxPosterior(HMMBase model, InstanceList instanceList, String outFile) {
