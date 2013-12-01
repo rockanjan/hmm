@@ -48,7 +48,7 @@ public class EM {
 		this.c = c;
 		this.model = model;
 	}
-	
+
 	public void setAdaptiveWeight() {
 		//fraction of data
 		double f = 1.0 * c.randomTrainingSampleInstanceList.size() / c.trainInstanceList.size();
@@ -59,9 +59,9 @@ public class EM {
 			//standard adaptiveWeight technique
 			//adaptiveWeight = (t0 + iterCount)^(-alpha)
 			adaptiveWeight = Math.pow((t0 + iterCount), -alpha);
-		}	
+		}
 	}
-	
+
 	public void eStep() {
 		c.generateRandomTrainingSample(sampleSentenceSize, iterCount);
 		if (model.hmmType == HMMType.WITH_NO_FINAL_STATE) {
@@ -180,7 +180,7 @@ public class EM {
 			// sampleSentenceSize += 1000;
 			StringBuffer sb = new StringBuffer();
 			LL = LL / c.randomTrainingSampleInstanceList.numberOfTokens;
-			
+
 			double trainPreplex = Math.pow(2, -LL/Math.log(2));
 			if (iterCount > 0) {
 				sb.append(String.format("LL %.6f Diff %.6f perp %.2f \t Iter %d", LL,
@@ -218,6 +218,9 @@ public class EM {
 			if(EM.sampleSentenceSize != Integer.MAX_VALUE && iterCount % 100 == 0) {
 				EM.sampleSentenceSize += 10000;
 			}
+            if(iterCount == 350) {
+                EM.sampleSentenceSize = Integer.MAX_VALUE;
+            }
 		}
 		System.out.println("Total EM Time : " + totalEMTime.stop());
 	}

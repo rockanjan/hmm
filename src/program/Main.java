@@ -32,11 +32,11 @@ public class Main {
 	public static String vocabFile;
 	public static String testFile;
 	public static String devFile;
-	
+
 	public static String outFileTrain;
 	public static String outFileTest;
 	public static String outFileDev;
-	
+
 	public static String outFolderPrefix;
 	public static int numStates;
 	public static int vocabThreshold; //only above this included
@@ -74,11 +74,11 @@ public class Main {
 
 		}
 		printParams();
-		//trainNew();
-		trainContinue(5); //-1 for final model
+		trainNew();
+		//trainContinue(5); //-1 for final model
 		testAll();
 	}
-	
+
 	public static void trainNew() throws IOException {
 		corpus = new Corpus("\\s+", vocabThreshold);
 		//TRAIN
@@ -110,7 +110,7 @@ public class Main {
 		em.start();
 		model.saveModel();
 	}
-	
+
 	public static void trainContinue(int iter) throws IOException {
 		corpus = new Corpus("\\s+", vocabThreshold);
 		corpus.readVocabFromDictionary("out/model/vocab.txt");
@@ -143,9 +143,9 @@ public class Main {
 		em.start();
 		model.saveModel();
 		*/
-		
+
 	}
-	
+
 	public static void writeSmoothedCorpus(String outFile) {
 		InstanceList instanceList = corpus.trainInstanceList;
 		try {
@@ -166,7 +166,7 @@ public class Main {
 		}
 		System.out.println("Finished writing smoothed corpus");
 	}
-	
+
 	public static void testAll() {
 		if(corpus.testInstanceList != null) {
 			double testLL = corpus.testInstanceList.getLL(model);
@@ -178,14 +178,14 @@ public class Main {
 			//testMaxPosterior(model, corpus.testInstanceList, outFileTest + ".posterior");
 			//testPosteriorDistribution(model, corpus.testInstanceList, outFileTest + ".posterior_distribution");
 		}
-		
+
 		if(corpus.devInstanceList != null) {
 			System.out.println("Dev data LL = " + corpus.devInstanceList.getLL(model));
 			test(model, corpus.devInstanceList, outFileDev);
 			//testMaxPosterior(model, corpus.testInstanceList, outFileDev + ".posterior");
 			//testPosteriorDistribution(model, corpus.testInstanceList, outFileDev + ".posterior_distribution");
 		}
-		
+
 		test(model, corpus.trainInstanceList, outFileTrain);
 		//testMaxPosterior(model, corpus.trainInstanceList, outFileTrain + ".posterior");
 		//testPosteriorDistribution(model, corpus.testInstanceList, outFileTrain + ".posterior_distribution");
@@ -219,7 +219,7 @@ public class Main {
 		}
 		System.out.println("Finished decoding");
 	}
-	
+
 	private static class DecoderWorker extends Thread {
 		final int startIndex;
 		final int endIndex;
@@ -272,7 +272,7 @@ public class Main {
 					worker.join();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
-				}				
+				}
 			}
 		}
 		System.out.println("done with decoding... writing to file");
