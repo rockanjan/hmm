@@ -27,7 +27,7 @@ public class Main {
 	static String delimiter = "\\+";
 	public static int numIter;
 	public static long seed = 3;
-	public static Random random = new Random(seed);
+	public static Random random;
 	public static String trainFile;
 	public static String vocabFile;
 	public static String testFile;
@@ -47,6 +47,7 @@ public class Main {
 	/** user parameters end **/
 	public static void main(String[] args) throws IOException {
 		Config.setup();
+		random =  new Random(seed);
 		if(Config.devFilename != null && !Config.devFilename.isEmpty()) {
 			Main.outFileDev = Config.decodeFolder + Config.devFilename + ".decoded";
 			devFile = Config.dataFolder + Config.devFilename;
@@ -75,7 +76,7 @@ public class Main {
 		}
 		printParams();
 		trainNew();
-		//trainContinue(5); //-1 for final model
+		//trainContinue(-1); //-1 for final model
 		testAll();
 	}
 
@@ -138,11 +139,11 @@ public class Main {
 		} else {
 			model.loadModel("/home/anjan/workspace/HMM/out/model/model_iter_" + iter + "_states_" + numStates + ".txt");
 		}
-		/*
+		
 		EM em = new EM(numIter, corpus, model);
 		em.start();
 		model.saveModel();
-		*/
+		
 
 	}
 
@@ -329,6 +330,7 @@ public class Main {
 		sb.append("\nIterations : " + numIter);
 		sb.append("\nNumStates : " + numStates);
 		sb.append("\nvocab thres : " + vocabThreshold);
+		sb.append("\nseed : " + seed);
 		System.out.println(sb.toString());
 	}
 }
