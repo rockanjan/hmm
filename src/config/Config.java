@@ -13,17 +13,17 @@ public class Config {
 	public static String dataFolder;
 
 	public static void setup() {
-		Main.numIter = 400;
-		Main.numStates = 200;
+		Main.numIter = 301;
+		Main.numStates = 25;
 		Main.vocabThreshold = 3; //only above this included
 
 		trainFilename = "nepali_train.txt";
         devFilename = "nepali_dev.txt";
         testFilename = "nepali_test.txt";
 
-		Main.USE_THREAD_COUNT = 4;
-		//EM.sampleSentenceSize = Integer.MAX_VALUE;
-		EM.sampleSentenceSize = 20000;
+		Main.USE_THREAD_COUNT = 2;
+		EM.sampleSentenceSize = Integer.MAX_VALUE;
+		//EM.sampleSentenceSize = 5000;
 		Corpus.sampleSequential = true;
 		EM.alpha = 0.5;
 
@@ -40,6 +40,4 @@ public class Config {
 		Main.outFileTrain = decodeFolder + trainFilename + ".decoded";
 		System.out.println("Number of threads : " + Main.USE_THREAD_COUNT);
 	}
-
-
 }

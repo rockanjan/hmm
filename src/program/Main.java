@@ -26,7 +26,7 @@ public class Main {
 	/** user parameters **/
 	static String delimiter = "\\+";
 	public static int numIter;
-	public static long seed = 3;
+	public static long seed = 1;
 	public static Random random;
 	public static String trainFile;
 	public static String vocabFile;
@@ -76,7 +76,7 @@ public class Main {
 		}
 		printParams();
 		trainNew();
-		//trainContinue(-1); //-1 for final model
+		//trainContinue(350); //-1 for final model
 		testAll();
 	}
 
@@ -91,7 +91,7 @@ public class Main {
 			corpus.readDev(devFile);
 		//save vocab file
 		corpus.saveVocabFile(outFolderPrefix + "/model/vocab.txt");
-		//writeSmoothedCorpus("nepali_smoothed_train.txt");
+		writeSmoothedCorpus("nepali_smoothed_train.txt");
 		//System.exit(-1);
 		if(modelType == HMMType.WITH_NO_FINAL_STATE) {
 			System.out.println("HMM with no final state");
@@ -116,10 +116,13 @@ public class Main {
 		corpus = new Corpus("\\s+", vocabThreshold);
 		corpus.readVocabFromDictionary("out/model/vocab.txt");
 		corpus.readTrain(trainFile);
+		
 		if(testFile != null)
 			corpus.readTest(testFile);
+		
 		if(devFile != null)
 			corpus.readDev(devFile);
+		
 		//writeSmoothedCorpus("combined-smoothed.txt");
 		//System.exit(-1);
 		if(modelType == HMMType.WITH_NO_FINAL_STATE) {
@@ -174,12 +177,11 @@ public class Main {
 			testLL = testLL / corpus.testInstanceList.numberOfTokens;
 			double testPerplexity = Math.pow(2, -testLL/Math.log(2));
 			System.out.println("Test data LL = " + testLL + " perplexity = " + testPerplexity);
-
 			test(model, corpus.testInstanceList, outFileTest);
 			//testMaxPosterior(model, corpus.testInstanceList, outFileTest + ".posterior");
 			//testPosteriorDistribution(model, corpus.testInstanceList, outFileTest + ".posterior_distribution");
 		}
-
+        /*
 		if(corpus.devInstanceList != null) {
 			System.out.println("Dev data LL = " + corpus.devInstanceList.getLL(model));
 			test(model, corpus.devInstanceList, outFileDev);
@@ -187,9 +189,11 @@ public class Main {
 			//testPosteriorDistribution(model, corpus.testInstanceList, outFileDev + ".posterior_distribution");
 		}
 
+
 		test(model, corpus.trainInstanceList, outFileTrain);
 		//testMaxPosterior(model, corpus.trainInstanceList, outFileTrain + ".posterior");
 		//testPosteriorDistribution(model, corpus.testInstanceList, outFileTrain + ".posterior_distribution");
+        */
 	}
 
 	public static void testPosteriorDistribution(HMMBase model, InstanceList instanceList, String outFile) {

@@ -50,14 +50,15 @@ public class EM {
 	}
 
 	public void setAdaptiveWeight() {
-		//fraction of data
-		double f = 1.0 * c.randomTrainingSampleInstanceList.size() / c.trainInstanceList.size();
-		if(f == 1) {
-			//System.out.println("fraction = 1, all dataset used");
+		// fraction of data
+		double f = 1.0 * c.randomTrainingSampleInstanceList.size()
+				/ c.trainInstanceList.size();
+		if (f == 1) {
+			// System.out.println("fraction = 1, all dataset used");
 			adaptiveWeight = 1.0;
 		} else {
-			//standard adaptiveWeight technique
-			//adaptiveWeight = (t0 + iterCount)^(-alpha)
+			// standard adaptiveWeight technique
+			// adaptiveWeight = (t0 + iterCount)^(-alpha)
 			adaptiveWeight = Math.pow((t0 + iterCount), -alpha);
 		}
 	}
@@ -72,7 +73,7 @@ public class EM {
 			expectedCounts = new HMMParamNoFinalStateLog(model);
 		}
 		expectedCounts.initializeZeros();
-		if(Main.USE_THREAD_COUNT <= 1) {
+		if (Main.USE_THREAD_COUNT <= 1) {
 			eStepNoThread();
 		} else {
 			eStepThreaded();
@@ -156,10 +157,10 @@ public class EM {
 
 	public void mStep() {
 		setAdaptiveWeight();
-		if(adaptiveWeight == 1.0) {
+		if (adaptiveWeight == 1.0) {
 			model.updateFromCounts(expectedCounts);
 		} else {
-			//System.out.println("adaptive weight = " + adaptiveWeight);
+			// System.out.println("adaptive weight = " + adaptiveWeight);
 			model.updateFromCountsWeighted(expectedCounts, adaptiveWeight);
 		}
 	}
@@ -181,9 +182,10 @@ public class EM {
 			StringBuffer sb = new StringBuffer();
 			LL = LL / c.randomTrainingSampleInstanceList.numberOfTokens;
 
-			double trainPreplex = Math.pow(2, -LL/Math.log(2));
+			double trainPreplex = Math.pow(2, -LL / Math.log(2));
 			if (iterCount > 0) {
-				sb.append(String.format("LL %.6f Diff %.6f perp %.2f \t Iter %d", LL,
+				sb.append(String.format(
+						"LL %.6f Diff %.6f perp %.2f \t Iter %d", LL,
 						(LL - bestOldLL), trainPreplex, iterCount));
 			}
 			if (LL > bestOldLL) {
@@ -191,36 +193,44 @@ public class EM {
 			}
 			// m-step
 			mStep();
-			if (c.devInstanceList != null) {
+			if (c.devInstanceList != null && iterCount % 10 == 0) {
 				LLDev = c.devInstanceList.getLL(model);
-				LLDev = LLDev/c.devInstanceList.numberOfTokens;
-				double devPerplex = Math.pow(2, -LLDev/Math.log(2));
+				LLDev = LLDev / c.devInstanceList.numberOfTokens;
+				double devPerplex = Math.pow(2, -LLDev / Math.log(2));
 				if (iterCount > 0) {
 					sb.append(String.format(" devLL %.6f \t dD %.6f dP %.2f",
 							LLDev, (LLDev - bestOldLLDev), devPerplex));
 				}
 			}
-            if(c.testInstanceList != null && iterCount % 20 == 0) {
-			double testLL = c.testInstanceList.getLL(model);
-			testLL = testLL / c.testInstanceList.numberOfTokens;
-			double testPerplexity = Math.pow(2, -testLL/Math.log(2));
-			System.out.println("Test data LL = " + testLL + " perplexity = " + testPerplexity);
-		    }
-			if (isConverged()) {
-				break;
+			
+			if (c.testInstanceList != null && iterCount % 50 == 0) {
+				double testLL = c.testInstanceList.getLL(model);
+				testLL = testLL / c.testInstanceList.numberOfTokens;
+				double testPerplexity = Math.pow(2, -testLL / Math.log(2));
+				System.out.println("Test data LL = " + testLL
+						+ " perplexity = " + testPerplexity);
 			}
-			sb.append(String.format("\t Fix: %d \t time %s",
-					Stats.totalFixes, eStepTime.stop()));
+			
+			if(iterCount % 10 == 0) {
+				if (isConverged()) {
+					break;
+				}
+			}
+			
+			sb.append(String.format("\t Fix: %d \t time %s", Stats.totalFixes,
+					eStepTime.stop()));
 			System.out.println(sb.toString());
-			if(iterCount % 50 == 0) {
+			if (iterCount % 10 == 0) {
 				model.saveModel(iterCount);
 			}
-			if(EM.sampleSentenceSize != Integer.MAX_VALUE && iterCount % 100 == 0) {
-				EM.sampleSentenceSize += 10000;
+			if (EM.sampleSentenceSize != Integer.MAX_VALUE && iterCount % 100 == 0 && iterCount > 0) {
+				EM.sampleSentenceSize += 5000;
 			}
-            if(iterCount == 350) {
-                EM.sampleSentenceSize = Integer.MAX_VALUE;
-            }
+			
+			if (iterCount == 400) {
+				EM.sampleSentenceSize = Integer.MAX_VALUE;
+			}
+			
 		}
 		System.out.println("Total EM Time : " + totalEMTime.stop());
 	}

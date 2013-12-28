@@ -17,8 +17,8 @@ import java.util.TreeMap;
 public class ViewMostFreqClusterWords {
 	public static void main(String[] args) throws IOException {
 		int NUM = 20; //display top N words
-		int CLUSTERS = 50;
-		String inFile = "/home/anjan/workspace/HMM/out/decoded/nepali_decoded/nepali_train.txt.decoded";
+		int CLUSTERS = 200;
+		String inFile = "/home/anjan/workspace/HMM/out/decoded/nepali_test.txt.decoded";
 		
 		int WORD_COL = 2;
 		int HMM_COL = 1;
