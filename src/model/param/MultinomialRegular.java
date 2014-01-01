@@ -29,7 +29,7 @@ public class MultinomialRegular extends MultinomialBase{
 	@Override
 	public void smooth() {
 		//hyperparameter
-		double small = 1;
+		double small = 1e-2 / (x*y);
 		for(int i=0; i<y; i++) {
 			for(int j=0; j<x; j++) {
 				count[j][i] += small;				
