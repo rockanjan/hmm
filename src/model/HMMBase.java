@@ -98,6 +98,7 @@ public abstract class HMMBase {
 	}
 
 	public void loadModel(String location) {
+		System.out.println("loading model from : " + location);
 		//TODO: currently loads only the exact same file format saved
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(location));
@@ -171,5 +172,23 @@ public abstract class HMMBase {
 			this.param = new HMMParamNoFinalState(this);
 		}
 		this.param.cloneFrom(other.param);
+	}
+	
+	public static void main(String[] args) {
+		int nrStates = 10;
+		int nrObs = 65000;
+		HMMBase h = new HMMNoFinalState(nrStates, nrObs);
+		h.initializeRandom(new Random());
+		h.saveModel();
+		HMMBase hloaded = new HMMNoFinalState(nrStates, nrObs);
+		hloaded.loadModel("out/model/model_final_states_" + nrStates + ".txt");
+		if(h.param.equalsApprox(hloaded.param)) {
+			System.out.println("Params match approx!");
+		}
+		if(h.param.equalsExact(hloaded.param)) {
+			System.out.println("Params match exactly!");
+		}
+		
+		
 	}
 }
