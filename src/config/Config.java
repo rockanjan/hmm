@@ -13,13 +13,13 @@ public class Config {
 	public static String dataFolder;
 
 	public static void setup() {
-		Main.numIter = 301;
-		Main.numStates = 25;
-		Main.vocabThreshold = 3; //only above this included
+		Main.numIter = 100;
+		Main.numStates = 50;
+		Main.vocabThreshold = 1; //only above this included
 
-		trainFilename = "nepali_train.txt";
-        devFilename = "nepali_dev.txt";
-        testFilename = "nepali_test.txt";
+		trainFilename = "data/conll2000_train.txt.SPL";
+        devFilename = "data/conll2000_test.txt.SPL";
+        testFilename = "data/conll2000_test.txt.SPL";
 
 		Main.USE_THREAD_COUNT = 2;
 		EM.sampleSentenceSize = Integer.MAX_VALUE;
