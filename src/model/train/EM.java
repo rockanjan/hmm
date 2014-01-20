@@ -28,8 +28,9 @@ public class EM {
 
 	// convergence criteria
 	double precision = 1e-8;
-	int maxConsecutiveDecreaseLimit = 50;
-
+	public static int maxConsecutiveDecreaseLimit = 3;
+	public static int convergenceCheckStep = 1;
+	
 	HMMParamBase expectedCounts;
 
 	int lowerCount = 0; // number of times LL could not increase from previous
@@ -188,7 +189,7 @@ public class EM {
 			}
 			// m-step
 			mStep();
-			if (c.devInstanceList != null && iterCount % 10 == 0) {
+			if (c.devInstanceList != null && iterCount % 1 == 0) {
 				LLDev = c.devInstanceList.getLL(model);
 				LLDev = LLDev / c.devInstanceList.numberOfTokens;
 				double devPerplex = Math.pow(2, -LLDev / Math.log(2));
@@ -197,7 +198,7 @@ public class EM {
 							LLDev, (LLDev - bestOldLLDev), devPerplex));
 				}
 			}
-			
+		    /*
 			if (c.testInstanceList != null && iterCount % 50 == 0) {
 				double testLL = c.testInstanceList.getLL(model);
 				testLL = testLL / c.testInstanceList.numberOfTokens;
@@ -205,28 +206,18 @@ public class EM {
 				System.out.println("Test data LL = " + testLL
 						+ " perplexity = " + testPerplexity);
 			}
-			
-			if(iterCount % 10 == 0) {
+			*/
+
+			if(iterCount % 1 == 0) {
 				if (isConverged()) {
 					break;
 				}
 			}
-			
+
 			sb.append(String.format("\t Fix: %d \t time %s", Stats.totalFixes,
 					eStepTime.stop()));
 			System.out.println(sb.toString());
-			if (iterCount % 10 == 0) {
-				model.saveModel(iterCount);
-			}
-			if (EM.sampleSentenceSize != Integer.MAX_VALUE && iterCount % 100 == 0 && iterCount > 0) {
-				EM.sampleSentenceSize += 5000;
-			}
-			
-			if (iterCount == 400) {
-				EM.sampleSentenceSize = Integer.MAX_VALUE;
-			}
-			
-		}
+			}		
 		System.out.println("Total EM Time : " + totalEMTime.stop());
 	}
 

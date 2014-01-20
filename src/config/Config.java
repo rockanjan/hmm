@@ -22,10 +22,15 @@ public class Config {
         testFilename = "conll2000_test.txt.SPL";
 
 		Main.USE_THREAD_COUNT = 2;
-		EM.sampleSentenceSize = Integer.MAX_VALUE;
-		//EM.sampleSentenceSize = 5000;
+		EM.sampleSentenceSize = Integer.MAX_VALUE; //batch-learning
+		//EM.sampleSentenceSize = 5000; //for online learning
 		Corpus.sampleSequential = true;
 		EM.alpha = 0.5;
+		// check convergence after these number of iterations
+		EM.convergenceCheckStep = 1; 
+		//allow at most this many consecutive time for the likelihood to go down
+		EM.maxConsecutiveDecreaseLimit = 3;  
+		
 
 		Main.seed = 1;
 		decodeFolder = "out/decoded/";
@@ -39,5 +44,6 @@ public class Config {
 		Main.vocabFile = Main.trainFile;
 		Main.outFileTrain = decodeFolder + trainFilename + ".decoded";
 		System.out.println("Number of threads : " + Main.USE_THREAD_COUNT);
+		System.out.println("VocabThres : " + Main.vocabThreshold);
 	}
 }
