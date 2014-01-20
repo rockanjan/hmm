@@ -1,4 +1,10 @@
-HMM
-==========
+An implementation of Hidden Markov Model (HMM) with the following features:
 
-A simple unsupervised naive bayes based clustering
+* Unsupervised training using Baum-Welch Algorithm.
+* Large scale training by using online learning techniques (mini-batch approach).
+* Faster training speed by multi-threading.
+* Viterbi Algorithm for decoding, supports multi-threading.
+* Platform independent: written entirely in Java.
+* Simple and stand-alone implementation (easy to modify).
+* Supports unicode.
+* Optionally uses dev data to avoid overfitting (by checking perplexity).
