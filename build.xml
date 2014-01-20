@@ -4,13 +4,13 @@
               To include a user specific buildfile here, simply create one in the same
               directory with the processing instruction <?eclipse.ant.import?>
               as the first entry and export the buildfile again. -->
-<project basedir="." default="build" name="naivebayes">
+<project basedir="." default="build" name="hmm">
     <property environment="env"/>
     <property name="ECLIPSE_HOME" value="../../../../opt/eclipse"/>
     <property name="debuglevel" value="source,lines,vars"/>
-    <property name="target" value="1.7"/>
-    <property name="source" value="1.7"/>
-    <path id="naivebayes.classpath">
+    <property name="target" value="1.6"/>
+    <property name="source" value="1.6"/>
+    <path id="hmm.classpath">
         <pathelement location="bin"/>
     </path>
     <target name="init">
@@ -32,7 +32,7 @@
         <echo message="${ant.project.name}: ${ant.file}"/>
         <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
             <src path="src"/>
-            <classpath refid="naivebayes.classpath"/>
+            <classpath refid="hmm.classpath"/>
         </javac>
     </target>
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
@@ -51,12 +51,12 @@
     </target>
     <target name="Corpus (2)">
         <java classname="corpus.Corpus" failonerror="true" fork="yes">
-            <classpath refid="naivebayes.classpath"/>
+            <classpath refid="hmm.classpath"/>
         </java>
     </target>
     <target name="Main (3)">
         <java classname="program.Main" failonerror="true" fork="yes">
-            <classpath refid="naivebayes.classpath"/>
+            <classpath refid="hmm.classpath"/>
         </java>
     </target>
 </project>
