@@ -17,9 +17,9 @@ public class Config {
 		Main.numStates = 50;
 		Main.vocabThreshold = 1; //only above this included
 
-		trainFilename = "data/conll2000_train.txt.SPL";
-        devFilename = "data/conll2000_test.txt.SPL";
-        testFilename = "data/conll2000_test.txt.SPL";
+		trainFilename = "conll2000_train.txt.SPL";
+        devFilename = "conll2000_test.txt.SPL";
+        testFilename = "conll2000_test.txt.SPL";
 
 		Main.USE_THREAD_COUNT = 2;
 		EM.sampleSentenceSize = Integer.MAX_VALUE;
