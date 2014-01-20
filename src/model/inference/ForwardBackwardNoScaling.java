@@ -149,13 +149,6 @@ public class ForwardBackwardNoScaling extends ForwardBackward{
 				}
 			}
 		}
-		if(model.hmmType == HMMType.WITH_FINAL_STATE) {
-			//transition to fake state
-			for(int i=0; i<nrStates; i++) {
-				//double value = getStatePosterior(T-1, i) * forwardBackward.model.param.transition.get(nrStates, i);
-				//transition.addToCounts(nrStates, i, value);
-			}
-		}
 	}
 	
 	/*

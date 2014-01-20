@@ -6,9 +6,8 @@ import java.util.List;
 import model.HMMBase;
 import model.HMMType;
 import model.param.HMMParamBase;
-import model.param.HMMParamFinalState;
-import model.param.HMMParamNoFinalState;
-import model.param.HMMParamNoFinalStateLog;
+import model.param.HMMParamRegular;
+import model.param.HMMParamLog;
 import program.Main;
 import util.Stats;
 import util.Timing;
@@ -65,12 +64,10 @@ public class EM {
 
 	public void eStep() {
 		c.generateRandomTrainingSample(sampleSentenceSize, iterCount);
-		if (model.hmmType == HMMType.WITH_NO_FINAL_STATE) {
-			expectedCounts = new HMMParamNoFinalState(model);
-		} else if (model.hmmType == HMMType.WITH_FINAL_STATE) {
-			expectedCounts = new HMMParamFinalState(model);
+		if (model.hmmType == HMMType.REGULAR) {
+			expectedCounts = new HMMParamRegular(model);
 		} else if (model.hmmType == HMMType.LOG_SCALE) {
-			expectedCounts = new HMMParamNoFinalStateLog(model);
+			expectedCounts = new HMMParamLog(model);
 		}
 		expectedCounts.initializeZeros();
 		if (Main.USE_THREAD_COUNT <= 1) {
@@ -137,12 +134,10 @@ public class EM {
 
 		@Override
 		public void run() {
-			if (model.hmmType == HMMType.WITH_NO_FINAL_STATE) {
-				threadExpectedCounts = new HMMParamNoFinalState(model);
-			} else if (model.hmmType == HMMType.WITH_FINAL_STATE) {
-				threadExpectedCounts = new HMMParamFinalState(model);
+			if (model.hmmType == HMMType.REGULAR) {
+				threadExpectedCounts = new HMMParamRegular(model);
 			} else if (model.hmmType == HMMType.LOG_SCALE) {
-				threadExpectedCounts = new HMMParamNoFinalStateLog(model);
+				threadExpectedCounts = new HMMParamLog(model);
 			}
 			threadExpectedCounts.initializeZeros();
 			for (int n = startIndex; n < endIndex; n++) {

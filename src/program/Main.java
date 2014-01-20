@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Random;
 
 import model.HMMBase;
-import model.HMMFinalState;
 import model.HMMNoFinalState;
 import model.HMMNoFinalStateLog;
 import model.HMMType;
@@ -60,7 +59,7 @@ public class Main {
 		if(unknownTestWord.exists()) {
 			unknownTestWord.delete();
 		}
-		modelType = HMMType.WITH_NO_FINAL_STATE;
+		modelType = HMMType.REGULAR;
 		if(args.length > 0) {
 			try{
 				numStates = Integer.parseInt(args[0]);
@@ -93,14 +92,9 @@ public class Main {
 		corpus.saveVocabFile(outFolderPrefix + "/model/vocab.txt");
 		writeSmoothedCorpus("nepali_smoothed_train.txt");
 		//System.exit(-1);
-		if(modelType == HMMType.WITH_NO_FINAL_STATE) {
-			System.out.println("HMM with no final state");
+		if(modelType == HMMType.REGULAR) {
+			System.out.println("HMM in regular scale");
 			model = new HMMNoFinalState(numStates, corpus.corpusVocab.vocabSize);
-		} else if(modelType == HMMType.WITH_FINAL_STATE) {
-			System.out.println("HMM with final state");
-			System.out.println("NOT WORKING");
-			System.exit(-1);
-			model = new HMMFinalState(numStates, corpus.corpusVocab.vocabSize);
 		} else if(modelType == HMMType.LOG_SCALE) {
 			System.out.println("HMM Log scale");
 			model = new HMMNoFinalStateLog(numStates, corpus.corpusVocab.vocabSize);
@@ -125,14 +119,9 @@ public class Main {
 		
 		//writeSmoothedCorpus("combined-smoothed.txt");
 		//System.exit(-1);
-		if(modelType == HMMType.WITH_NO_FINAL_STATE) {
-			System.out.println("HMM with no final state");
+		if(modelType == HMMType.REGULAR) {
+			System.out.println("HMM in regular scale");
 			model = new HMMNoFinalState(numStates, corpus.corpusVocab.vocabSize);
-		} else if(modelType == HMMType.WITH_FINAL_STATE) {
-			System.out.println("HMM with final state");
-			System.out.println("NOT WORKING");
-			System.exit(-1);
-			model = new HMMFinalState(numStates, corpus.corpusVocab.vocabSize);
 		} else if(modelType == HMMType.LOG_SCALE) {
 			System.out.println("HMM Log scale");
 			model = new HMMNoFinalStateLog(numStates, corpus.corpusVocab.vocabSize);

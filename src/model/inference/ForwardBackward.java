@@ -1,11 +1,8 @@
 package model.inference;
 
 import model.HMMBase;
-import model.HMMNoFinalState;
-import model.HMMType;
 import model.param.HMMParamBase;
 import model.param.MultinomialBase;
-import model.param.MultinomialRegular;
 import corpus.Instance;
 
 public abstract class ForwardBackward {

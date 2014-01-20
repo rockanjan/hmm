@@ -1,38 +1,30 @@
 package model;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Random;
 
 import model.param.HMMParamBase;
-import model.param.HMMParamFinalState;
-import model.param.HMMParamNoFinalState;
+import model.param.HMMParamRegular;
 
 public class HMMNoFinalState extends HMMBase{
 	public HMMNoFinalState() {
 		super();
-		this.hmmType = HMMType.WITH_NO_FINAL_STATE;
+		this.hmmType = HMMType.REGULAR;
 	}
 
 	public HMMNoFinalState(int nrStates, int nrObs) {
 		super();
-		this.nrStatesWithFake = nrStates;
 		this.nrStates = nrStates;
 		this.nrObs = nrObs;
-		this.hmmType = HMMType.WITH_NO_FINAL_STATE;
+		this.hmmType = HMMType.REGULAR;
 	}
 
 	public void initializeRandom(Random r) {
-		this.param = new HMMParamNoFinalState(this);
+		this.param = new HMMParamRegular(this);
 		this.param.initialize(r);
 	}
 	
 	public void initializeZeros() {
-		param = new HMMParamNoFinalState(this);
+		param = new HMMParamRegular(this);
 		param.initializeZeros();
 	}
 	
@@ -42,7 +34,7 @@ public class HMMNoFinalState extends HMMBase{
 		int nrObs = 50;
 		HMMNoFinalState hmm = new HMMNoFinalState(nrStates, nrObs);
 		hmm.initializeRandom(new Random());
-		HMMParamBase beforeSaving = new HMMParamNoFinalState(hmm);
+		HMMParamBase beforeSaving = new HMMParamRegular(hmm);
 		beforeSaving.initializeZeros();
 		beforeSaving.cloneFrom(hmm.param);
 		String fileSaved = hmm.saveModel();

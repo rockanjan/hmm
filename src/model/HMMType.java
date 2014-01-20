@@ -1,8 +1,7 @@
 package model;
 
 public enum HMMType {
-	WITH_NO_FINAL_STATE("HMM with no final state"), 
-	WITH_FINAL_STATE("HMM with final state"), //with fake final state
+	REGULAR("HMM working in regular scale, no log"), 
 	LOG_SCALE("HMM working with log scale"); //log
 	 
 	private String description;

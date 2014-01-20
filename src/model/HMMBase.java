@@ -8,10 +8,9 @@ import java.io.PrintWriter;
 import java.util.Random;
 
 import model.param.HMMParamBase;
-import model.param.HMMParamNoFinalState;
+import model.param.HMMParamRegular;
 
 public abstract class HMMBase {
-	public int nrStatesWithFake = -1; //the extending class should initialize this (for no fake, equals nrStates)
 	public int nrStates = -1;
 	public int nrObs = -1;
 	public HMMParamBase param;
@@ -70,7 +69,7 @@ public abstract class HMMBase {
 			pw.println();
 			// transition
 			for (int i = 0; i < nrStates; i++) {
-				for (int j = 0; j < nrStatesWithFake; j++) {
+				for (int j = 0; j < nrStates; j++) {
 					pw.print(param.transition.get(j, i));
 					if (j != nrStates) {
 						pw.print(" ");
@@ -104,11 +103,6 @@ public abstract class HMMBase {
 			BufferedReader br = new BufferedReader(new FileReader(location));
 			try{
 				nrStates = Integer.parseInt(br.readLine());
-				if(hmmType == HMMType.WITH_FINAL_STATE) {
-					nrStatesWithFake = nrStates + 1;
-				} else if(hmmType == HMMType.WITH_NO_FINAL_STATE) {
-					nrStatesWithFake = nrStates;
-				}
 				this.nrObs = Integer.parseInt(br.readLine());
 				this.initializeZeros();
 				br.readLine();
@@ -126,9 +120,9 @@ public abstract class HMMBase {
 				//transition
 				for(int i=0; i<nrStates; i++) {
 					splitted = br.readLine().split("(\\s+|\\t+)");
-					if(nrStatesWithFake != splitted.length) {
+					if(nrStates != splitted.length) {
 						br.close();
-						System.err.format("For transition: nrStates=%d, from file=%d\n", nrStatesWithFake, splitted.length);
+						System.err.format("For transition: nrStates=%d, from file=%d\n", nrStates, splitted.length);
 						throw new RuntimeException("Loading model, transition parameters not matching number of states");
 					}
 					for(int j=0; j<splitted.length; j++) {
@@ -169,7 +163,7 @@ public abstract class HMMBase {
 	
 	public void clone(HMMNoFinalState other) {
 		if(this.param == null) {
-			this.param = new HMMParamNoFinalState(this);
+			this.param = new HMMParamRegular(this);
 		}
 		this.param.cloneFrom(other.param);
 	}
