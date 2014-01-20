@@ -3,3 +3,6 @@
 *.war
 *.ear
 data/
+.settings/
+.classpath
+.project
